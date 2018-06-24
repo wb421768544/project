@@ -1,0 +1,67 @@
+<template>
+  <div id="all">
+    <top-bar></top-bar>
+    <router-view></router-view>
+    <footer-bar></footer-bar>
+  </div> <!-- div#app -->
+</template>
+
+<script>
+import $ from "jquery";
+import TopBar from "./components/bar/TopBar";
+import FooterBar from "./components/bar/Footer";
+$("html").click(() => {
+  var $target = $(event.target);
+  if (
+    !( $target.isChildAndSelfOf(".list") || $target.isChildAndSelfOf("#portrait") )
+  ) {
+    $(".list").css("display", "none");
+  }
+});
+$.fn.isChildAndSelfOf = function(b) {
+  return this.closest(b).length > 0;
+};
+
+export default {
+  name: "App",
+  components: {
+    "top-bar": TopBar,
+    "footer-bar": FooterBar
+  }
+};
+</script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+ul {
+  list-style: none;
+}
+a,
+button,
+img {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+a {
+  color: black;
+}
+body {
+  background-size: cover;
+  background-color: #f4f5f5;
+  background-repeat: no-repeat;
+}
+html {
+  height: 100%;
+  min-width: 500px;
+  overflow-y: scroll;
+}
+.router-link-active {
+  color: inherit;
+  text-decoration: none;
+}
+</style>
