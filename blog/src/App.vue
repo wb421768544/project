@@ -64,4 +64,16 @@ html {
   color: inherit;
   text-decoration: none;
 }
+.v-note-panel {
+  border: none!important;
+}
+.v-show-content {
+  background: #fff!important;
+}
+.article-area {
+  white-space: pre-wrap!important;
+}
+.v-note-show {
+  overflow-y: hidden!important;
+}
 </style>

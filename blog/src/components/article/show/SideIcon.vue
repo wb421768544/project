@@ -50,7 +50,7 @@ export default {
       this.article.star = parseInt(this.article.star) + num;
     },
     comment() {
-      // $('.comment-block')[0].scrollIntoView();
+      $('.comment-block')[0].scrollIntoView();
     }
   },
   mounted() {
@@ -76,14 +76,14 @@ function getFlag(self){
 
 <style scoped>
 .icon {
-  width: 1.5em;
-  height: 1.2em;
+  width: 1.3em;
+  height: 1.3em;
   box-sizing: border-box;
   display: inline-block;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  vertical-align: middle;
+  vertical-align: center;
 }
 .side-icon {
   font-size: 1.8em;
@@ -92,11 +92,11 @@ function getFlag(self){
   left: -80px;
   user-select: none;
 }
-.side-icon div {
+.side-icon > div {
   cursor: pointer;
   text-align: center;
   position: relative;
-  border-radius: 2em;
+  border-radius: 3em;
   padding: 0.4em;
   margin-bottom: 1em;
   background-color: white;
@@ -109,7 +109,7 @@ function getFlag(self){
   color: white;
   top: -6px;
   right: -6px;
-  border-radius: 0.5em;
+  border-radius: 1em;
   font-size: 0.5em;
 }
 .icon-star {background-image: url(../../../assets/star-before.svg);}

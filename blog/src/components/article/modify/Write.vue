@@ -46,6 +46,7 @@ export default {
       flag: false,
       portrait: '',
       published: false,
+      imgs: [],
       api: 'http://' + location.hostname + ':8080/'
     };
   },
@@ -72,6 +73,7 @@ export default {
           let json = JSON.parse(xhr.responseText);
           if(json.flag) {
            this.$refs.md.$img2Url(pos, this.api + 'articles/art_imgs/' + json.url);
+           this.imgs.push(json.url);
           }else{
             alert(json.reason);
           }
@@ -81,18 +83,33 @@ export default {
       xhr.send(formdata);
      },
      submit() {
+
        var $checked = $('.checked');
        if($checked.length == 0) {
          return alert('请选择文章分类！');
        }else if (this.title.replace(/[\r\n]/g, "").trim().length == 0 || this.value.replace(/[\r\n]/g, "").trim().length == 0) {
          return alert('标题和文章内容不得为空！');
        }
+       var $imgs = $('.v-show-content img');
+       var hrefs = [];
+       $imgs.each(function(index, val) {
+         var index = val.src.lastIndexOf('/') + 1;
+         hrefs.push(val.src.substring(index));
+       });
+       var toDelImgs = [];
+       for(let i = 0, len = this.imgs.length; i < len; i ++) {
+         if(hrefs.indexOf(this.imgs[i]) == -1) {
+           toDelImgs.push(this.imgs[i]);
+         }
+       }
        var info = {
          type: $checked.text(),
          title: this.title,
          value: this.value,
-         timer: Date.now()
+         timer: Date.now(),
+         'toDelImgs': toDelImgs
        };
+       console.log(info)
        $.ajax({
          type: 'post',
          data: info,
@@ -107,7 +124,7 @@ export default {
         },
         xhrFields: {
           withCredentials: true
-        },
+        }
        });
      }
   },

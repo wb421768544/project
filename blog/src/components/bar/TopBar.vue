@@ -91,7 +91,7 @@ export default {
   width: 100%;
   position: fixed;
   background-color: white;
-  box-shadow: 0 5px 5px rgba(128, 128, 128, 0.293);
+  box-shadow: 0 0 5px rgba(128, 128, 128, 0.293);
 }
 .top-bar {
   margin: 0 auto;

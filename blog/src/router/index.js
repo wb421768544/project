@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Home from '@/components/Home'
-import LogIn from '@/components/LogIn'
-import SignUp from '@/components/SignUp'
-import User from '@/components/user/User'
-import NotFound from '@/components/NotFound'
+import Home from '@/components/Home';
+import LogIn from '@/components/LogIn';
+import SignUp from '@/components/SignUp';
+import User from '@/components/user/User';
+import NotFound from '@/components/NotFound';
 
 
 import Article from '@/components/article/Article';

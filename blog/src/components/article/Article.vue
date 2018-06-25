@@ -73,7 +73,6 @@ export default {
     }
   },
   mounted() {
-    $('.v-show-content').css('background', '#fff');
     $.ajax({
       url: this.api + 'article?id=' + this.$route.params.id,
       type: 'post',
