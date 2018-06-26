@@ -39,7 +39,8 @@ export default {
                         this.info[0].reason = "";
                         location.reload();
                         if(history.length != 0) {
-                          history.go(-1);
+                          // history.go(-1);
+                          this.$router.reload();
                         }else{
                           location.replace('http://' + location.hostname + ':8888');
                         }

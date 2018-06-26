@@ -1,6 +1,7 @@
-var express = require('express');
-var mysql = require('mysql');
-var router = express.Router();
+/*jshint esversion: 6 */
+const mysql = require('mysql');
+const express = require('express');
+const router = express.Router();
 var options = { //Option of SQL
   host: 'localhost',
   user: 'root',
@@ -9,7 +10,7 @@ var options = { //Option of SQL
   useConnectionPooling: true
 };
 
-var client = mysql.createConnection(options);
+const client = mysql.createConnection(options);
 
 router.get('/', function (req, res) {
   var option = req.query.require;
@@ -59,7 +60,10 @@ function updateStar(id, req, res) {
     var deleteStar = 'delete from stars where(id=? and article_id=?)';
     var updateStarNum = 'update stars set star=? where(article_id=?)';
     var updateArticle = 'update article set starJSON=?, star=? where(article_id=?)';
-    var addStar = `insert into stars (id, article_id, title, author, type, star, comment, timer, name) values(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    var addStar =
+    `insert into stars 
+    (id, article_id, title, author, type, star, comment, timer, name) 
+    values(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     var flag = 0, star = 0;
     if(!((json[id] && (num < 0)) || (!json[id] && (num > 0)))) {

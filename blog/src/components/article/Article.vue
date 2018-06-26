@@ -8,7 +8,9 @@
             <div class="author-info-box">
               <span class="author-name">{{authorInfor.name}}</span><br />
               <span class="time">{{new Date(parseInt(article.timer)).toLocaleString()}}</span>
-              <span class="re-editor" v-if="authorInfor.id === self.id"><router-link :to="'/edit/' + article.article_id">· 编辑</router-link></span>
+              <span class="re-editor" v-if="authorInfor.id === self.id">
+                <router-link :to="'/edit/' + article.article_id">· 编辑</router-link>
+              </span>
             </div>
           </div>
           <h1 class="article-title">{{article.title}}</h1>

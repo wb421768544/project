@@ -1,6 +1,7 @@
-var express = require('express');
-var router = express.Router();
-var mysql = require('mysql');
+/*jshint esversion: 6 */
+const express = require('express');
+const router = express.Router();
+const mysql = require('mysql');
 
 var options = {
   host: "localhost",
@@ -9,7 +10,7 @@ var options = {
   database: "mydatabase",
   useConnectionPooling: true
 };
-var client = mysql.createConnection(options);
+const client = mysql.createConnection(options);
 
 router.use('/', function(req, res){
   queryArticle(req.query.id, req, res);

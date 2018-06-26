@@ -83,7 +83,6 @@ export default {
       xhr.send(formdata);
      },
      submit() {
-
        var $checked = $('.checked');
        if($checked.length == 0) {
          return alert('请选择文章分类！');
@@ -109,7 +108,6 @@ export default {
          timer: Date.now(),
          'toDelImgs': toDelImgs
        };
-       console.log(info)
        $.ajax({
          type: 'post',
          data: info,

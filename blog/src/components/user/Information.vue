@@ -1,65 +1,64 @@
 <template>
-    <div class="info">
-        <p>
-            头像:
-            <img :src="imgSrc" class="portrait" @click="changeImg">
-        </p>
-        <p>
-            皮肤:<span></span>
-        </p>
-        <p>
-            我的用户名:
-            <input type="text" :value="selfInfor.id" disabled="true">
-        </p>
-        <p>
-            我的昵称:
-            <img :src="icon" class="icon-pen">
-            <input type="text" :value="selfInfor.name" disabled="true">
-        </p>
-        <p>
-            绑定的手机:
-            <input type="text" :value="selfInfor.phone" disabled="true">
-        </p>
-        <p>
-            绑定的邮箱:
-            <input type="text" :value="selfInfor.eMail" disabled="true">
-        </p>
-        <div v-if="!flag" id="file">
-            <div>
-                <article id="upload" @change="submit">
-                    <form id="form">
-                        <input type="file" name="portrait">
-                    </form>
-                    <span>
-                        <img src="@/assets/icon-img.png" class="icon-img">
-                        选择头像
-                    </span>
-                </article>
-                <div id="select-container">
-                    <img src="" class="src-img">
-                    <canvas id="temp" height="150" width="150"></canvas>
-                    <div id="select"></div>
-                </div>
-                <canvas id="final" height="200" width="200"></canvas>
-                <button class="btn-file" @click="save">保存</button>
-                <button class="btn-file" @click="none">取消</button>
-            </div>
+  <div class="info">
+    <p>
+      头像:
+      <img :src="imgSrc" class="portrait" @click="changeImg">
+    </p>
+    <p>
+      皮肤:<span></span>
+    </p>
+    <p>
+      我的用户名:
+      <input type="text" :value="selfInfor.id" disabled="true">
+    </p>
+    <p>
+      我的昵称:
+      <img src="@/assets/modify-pen.svg" class="icon-pen">
+      <input type="text" :value="selfInfor.name" disabled="true">
+    </p>
+    <p>
+      绑定的手机:
+      <input type="text" :value="selfInfor.phone" disabled="true">
+    </p>
+    <p>
+      绑定的邮箱:
+      <input type="text" :value="selfInfor.eMail" disabled="true">
+    </p>
+    <div v-if="!flag" id="file">
+      <div>
+        <article id="upload" @change="submit">
+          <form id="form">
+              <input type="file" name="portrait">
+          </form>
+          <span>
+              <img src="@/assets/icon-img.png" class="icon-img">
+              选择头像
+          </span>
+        </article>
+        <div id="select-container">
+          <img src="" class="src-img">
+          <canvas id="temp" height="150" width="150"></canvas>
+          <div id="select"></div>
         </div>
-    </div>  <!-- info -->
+        <canvas id="final" height="200" width="200"></canvas>
+        <button class="btn-file" @click="save">保存</button>
+        <button class="btn-file" @click="none">取消</button>
+      </div>
+    </div>
+  </div>  <!-- info -->
 </template>
 
 <script>
 import Move from "@/methods/move";
 export default {
-  name: "information",
   data() {
     return {
-      api: "http://" + location.hostname + ":8080/",
       src: "",
-      flag: false
+      flag: false,
+      api: "http://" + location.hostname + ":8080/"
     };
   },
-  props: ["selfInfor", "icon", "imgSrc"],
+  props: ["selfInfor", "imgSrc"],
   methods: {
     changeImg() {
       $("#file").css("display", "block");

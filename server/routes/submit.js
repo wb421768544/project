@@ -1,9 +1,10 @@
+/*jshint esversion: 6 */
 //update user information
-var fs = require('fs');
-var path = require('path');
-var mysql = require('mysql');
-var express = require('express');
-var router = express.Router();
+const fs = require('fs');
+const path = require('path');
+const mysql = require('mysql');
+const express = require('express');
+const router = express.Router();
 
 var options = { //Option of SQL
   host: 'localhost',
@@ -12,7 +13,7 @@ var options = { //Option of SQL
   database: 'mydatabase',
   useConnectionPooling: true
 };
-var client = mysql.createConnection(options);
+const client = mysql.createConnection(options);
 
 router.use('/', function (req, res) {
   var option = req.query.action;

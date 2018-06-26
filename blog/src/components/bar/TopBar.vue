@@ -2,45 +2,47 @@
   <transition name="show" >
   <div class="top-bar-container" v-if="checkPath">
     <div class="top-bar">
-        <router-link to="/">
-            <img src="../../assets/wb.jpg" id="wb">
-        </router-link>
-        <router-link to="/">首页</router-link>
-        <input type="text">
-        <ul class="right">
-            <li>
-                <router-link to="/write">
-                    <img src="../../assets/write-article.svg" class="write-icon">
-                    <button class="btn-write-blog">写文章</button>
-                </router-link>
-            </li>
-            <li v-if="!flag">
-                <router-link to="/login">登录</router-link>
-            </li>
-            <li v-if="!flag">
-                <router-link to="/signup">注册</router-link>
-            </li>
-            <li v-else>
-              <portrait-part :name="name" :portrait="portrait"></portrait-part>
-            </li>
-        </ul>       <!-- ul.right -->
+      <router-link to="/">
+        <img src="../../assets/wb.jpg" id="wb">
+      </router-link>
+      <router-link to="/">首页</router-link>
+      <form>
+        <input type="text" placeholder="搜索文章">
+        <img src="@/assets/search.svg" />
+      </form>
+      <ul class="right">
+        <li>
+          <router-link to="/write">
+            <img src="../../assets/write-article.svg" class="write-icon">
+            <button class="btn-write-blog">写文章</button>
+          </router-link>
+        </li>
+          <li v-if="!flag">
+            <router-link to="/login">登录</router-link>
+          </li>
+          <li v-if="!flag">
+            <router-link to="/signup">注册</router-link>
+          </li>
+          <li v-else>
+            <portrait-part :name="name" :portrait="portrait"></portrait-part>
+          </li>
+      </ul>       <!-- ul.right -->
     </div>      <!--top-bar -->
   </div> 
   </transition>
 </template>
 
 
-
 <script>
-import parseCookie from "@/methods/parseCookie";
-import checkPath from '@/methods/checkPath';
 import Portrait from '../bar/Portrait';
+import checkPath from '@/methods/checkPath';
+import parseCookie from "@/methods/parseCookie";
 export default {
   data() {
     return {
+      name: '',
       flag: false,
       portrait: '',
-      name: "",
       checkPath: true
     };
   },
@@ -52,7 +54,7 @@ export default {
     }
   },
   components: {
-    'portrait-part': Portrait
+    portraitPart: Portrait
   },
   mounted() {
     this.checkPath = checkPath(this.$route);
@@ -85,6 +87,30 @@ export default {
 
 
 <style scoped>
+form.focus {
+  border: 1px solid #007fff;
+}
+form {
+  display: inline-block; 
+  border: 1px solid #e6e6e7;
+  background-color: #fafafb;
+}
+form img {
+  margin: 0;
+  padding: 0 8px;
+  vertical-align: middle;
+}
+input {
+  border: none;
+  outline: none;
+  padding: 0.6em 0;
+  font-size: 0.85em;
+  padding-left: 10px;
+  border-radius: 2px;
+  vertical-align: middle;
+  background-color: transparent;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
 .top-bar-container {
   top: 0;
   z-index: 5;
