@@ -239,6 +239,9 @@ export default {
 .auto-input:focus {
   border: rgb(0, 127, 255) 0.5px solid;
 }
+.div-auto-input {
+  margin-bottom: 49px;
+}
 .comment-content {
   word-wrap: break-word;
   white-space:pre-line;

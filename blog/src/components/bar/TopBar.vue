@@ -1,6 +1,6 @@
 <template>
-  <transition name="show" >
-  <div class="top-bar-container" v-if="checkPath">
+  <transition name="show">
+  <div class="top-bar-container" v-if="checkPath" v-show="show">
     <div class="top-bar">
       <router-link to="/">
         <img src="../../assets/wb.jpg" id="wb">
@@ -40,6 +40,7 @@ import parseCookie from "@/methods/parseCookie";
 export default {
   data() {
     return {
+      show: true,
       name: '',
       flag: false,
       portrait: '',
@@ -76,6 +77,20 @@ export default {
         }
       });
     }
+    var clear = 0, last = 0;
+    var $window = $(window);
+    window.onscroll = () => {
+      clearTimeout(clear);
+      clear = setTimeout(() => {
+        var now = $window.scrollTop();
+        if(now > last && now > 600) {
+          this.show = false;
+        } else if (now < last || now < 600) {
+          this.show = true;
+        }
+        last = now;
+      }, 100);
+    };
   },
   watch: {
     $route(to, from) {
@@ -87,6 +102,14 @@ export default {
 
 
 <style scoped>
+.show-enter, .show-leave-to {
+  transform: translateY(-100%);
+  transition: transform 0.2s;
+}
+.show-enter-to, .show-leave {
+   transform: translateY(0%);
+  transition: transform 0.2s;
+}
 form.focus {
   border: 1px solid #007fff;
 }

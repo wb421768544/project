@@ -43,7 +43,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'wb_session_id',
   resave: true,
-  saveUnitialized: true,
+  saveUnitialized: false,
   rolling: true,
   cookie: {
     maxAge: 1000 * 60 * 60

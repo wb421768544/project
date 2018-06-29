@@ -133,7 +133,7 @@ function uploadArt(req, res, id) {
       reason: "title or content is empty"
     });
   }
-  var toDelImgs = req.body["toDelImgs[]"];
+  var toDelImgs = req.body["toDelImgs[]"] || [];
   toDelImgs.forEach(val => {
     let path = ".\\public\\articles\\art_imgs\\" + val;
     fs.unlink(path, err => {
