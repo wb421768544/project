@@ -1,12 +1,12 @@
 <template>
-    <form :action="url + '/login'" method="POST">
-        <h2>账号登陆 &nbsp; <span>Blob</span></h2>
+    <form :action="$store.getters.getApi('login')" method="POST">
+        <h2>账号登陆 &nbsp; <span>Blog</span></h2>
         <p v-for="(item, index) in info" :key="index">
             <label>{{item.name + ":"}}</label>
             <span class="reason">{{item.reason}}</span><br>
             <input class="user-info" :name="item.key" :type="item.type"  v-model="value[index]" :placeholder="item.placeholder" />
         </p><br>
-        <button @click="submit" type="submit" class="">登录</button><br>
+        <button @click="submit" type="submit">登录</button><br>
         <span>还没有账号？<a href="./signin.html">注册</a></span>
         <a href="">忘记密码</a>
     </form>
@@ -24,32 +24,37 @@ export default {
             psw:"",
             flag:"用户名",
             value:["",""],
-            url:  'http://' + location.hostname + ':8080',
             imgHref: 'http://www.huoming.com/d/file/banquan/ruanzhu/2017-10-24/9ff6612eedbe78eb54a465d604ec8ca2.jpg'
         };
     },
     methods:{
         submit() {
             event.preventDefault();
+            console.log(this.value);
+            if(this.value[0].trim().length == 0) {
+              return alert('请输入用户名');
+            }
+            if(this.value[1].trim().length == 0){
+              return alert('请输入密码');
+            }
             $.ajax({
-                url: this.url + '/login',
-                method: 'POST',
-                success: (data) => {
-                    if(data.flag){
-                        this.info[0].reason = "";
-                        location.reload();
-                        if(history.length != 0) {
-                          // history.go(-1);
-                          this.$router.reload();
-                        }else{
-                          location.replace('http://' + location.hostname + ':8888');
-                        }
-                    }else{
-                        this.info[0].reason = data.reason;
-                    }
-                },
-                data: "login=true&id=" + this.value[0] + "&password=" + this.value[1],
-                xhrFields:{withCredentials:true}
+              url: this.$store.getters.getApi('login'),
+              method: 'POST',
+              success: (data) => {
+                  if(data.flag){
+                      this.info[0].reason = "";
+                      if(history.length != 0) {
+                        this.$router.push('/');
+                      }else{
+                        this.$router.push('/');
+                      }
+                      location.reload();
+                  }else{
+                      this.info[0].reason = data.reason;
+                  }
+              },
+              data: "login=true&id=" + this.value[0] + "&password=" + this.value[1],
+              xhrFields:{withCredentials:true}
             });
         }
     },

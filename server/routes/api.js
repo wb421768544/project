@@ -5,7 +5,7 @@ const router = express.Router();
 var options = { //Option of SQL
   host: 'localhost',
   user: 'root',
-  password: 'WANGBING520',
+  password: '3.3.0.',
   database: 'mydatabase',
   useConnectionPooling: true
 };
@@ -22,9 +22,6 @@ router.get('/', function (req, res) {
         break;
       case 'stars':
         queryStar(session.id, res);
-        break;
-      case 'information':
-        queryInformation(session.id, res);
         break;
       case 'relationship':
         queryRelationship(session.id, res);
@@ -118,7 +115,7 @@ function queryUser(id, res) {
 
   var selectFans = 'select fan from fans where(id=?)';
   var selectUserData = 'select *from user where(id=?)';
-  var selectArticle = 'select *from article where(id=?)';
+  var selectArticle = 'select article_id,type,comment,number,star,timer,title from article where(id=?)';
   var selectFollows = 'select concern from follow where (id=?)';
 
   client.query(selectFans, [id], getFans);
@@ -142,7 +139,7 @@ function queryUser(id, res) {
     info.data.image = results[0].image;
     info.data.name = results[0].name;
     info.data.style = results[0].style;
-    counter++;
+    counter ++;
     whetherToSubmit();
   }
 
@@ -163,7 +160,7 @@ function queryUser(id, res) {
       return console.log('Query follow err:', err.message);
     }
     info.data.follow = results;
-    counter++;
+    counter ++;
     whetherToSubmit();
   }
 
@@ -173,8 +170,8 @@ function queryUser(id, res) {
       return console.log('Query article err:', err.message);
     }
     info.article = results;
-    delete info.article.content;
-    counter++;
+    // delete info.article.content;
+    counter ++;
     whetherToSubmit();
   }
 }
@@ -191,23 +188,6 @@ function queryStar(id, res) {
     res.setHeader('Content-Type', 'text/json;charset=utf-8');
     res.send({
       stars: results
-    });
-  }
-}
-
-function queryInformation(id, res) {
-  var selectInformation = 'select *from user where(id=?)';
-
-  client.query(selectInformation, [id], getInformation);
-
-  function getInformation(err, results) {
-    if (err) {
-      return console.log('Query information err:', err.message);
-    }
-    delete results[0].password;
-    results[0].phone = results[0].phone.substring(0, 3) + '****' + results[0].phone.substring(7);
-    res.send({
-      information: results[0]
     });
   }
 }

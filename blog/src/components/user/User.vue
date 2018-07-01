@@ -3,29 +3,25 @@
     <article class="article">
       <nav class="menu-bar">
         <div>
-            <img :src="authorInfo.image">
-            <span>{{authorInfo.name}}</span>
-            <button>编辑个人资料</button>
+          <img :src="getApi(getUser.image)">
+          <span>{{getUser.name}}</span>
+          <button>编辑个人资料</button>
         </div>
         <ul>
-            <li @click="blog">我的博客</li>
-            <li @click="star">我的收藏</li>
-            <li @click="information">我的资料</li>
-            <li @click="relationship">我的关系</li>
+          <li @click="blog">我的博客</li>
+          <li @click="star">我的收藏</li>
+          <li @click="information">我的资料</li>
+          <li @click="relationship">我的关系</li>
         </ul>
       </nav>
       <blog-star :arr="[articleInfo, stars]" :author="authorInfo.name" :show="show" />
-      <self-information :self-infor="selfInfor" v-if="show[2]" :imgSrc="authorInfo.image" />
-      <relationship :arr="[fans, follows]" :api="api" v-if="show[3]" />
+      <self-information v-if="show[2]" />
+      <relationship v-if="show[3]" />
     </article>
     <div class="side-bar">
-      <div class="rs">
-        <span>关注了</span><br>
-        <span>{{(len[0])}}</span>
-      </div>
-      <div class="rs">
-        <span>关注者</span><br>
-        <span>{{(len[1])}}</span>
+      <div class="rs" v-for="(item, index) in [{item: '关注了', number: fansNumber}, {item: '关注者', number: followNumber}]" :key="index">
+        <span>{{item.item}}</span><br>
+        <span>{{item.number}}</span>
       </div>
     </div>
   </div>
@@ -35,33 +31,30 @@
 import BlogStar from "./BlogStar";
 import Relationship from "./Relationship";
 import SelfInformation from "./Information";
-import parseCookie from "@/methods/parseCookie";
+import { mapGetters } from 'vuex';
 export default {
   name: "user",
   data() {
     return {
-      len: [],
-      fans: {},
       stars: {},
-      follows: {},
-      selfInfor: {},
       authorInfo: {},
       articleInfo: {},
+      fansNumber: 0,
+      followNumber: 0,
       show: [true, false, false, false],
-      api: "http://" + location.hostname + ":8080/"
     };
   },
   methods: {
     blog() {
       if (!this.show[0]) {
-        this.request();
+        this.requestPersonBlogInformation();
         this.updateView(1);
       }
     },
     star() {
       if (!this.show[1]) {
         $.ajax({
-          url: this.api + "api?require=stars",
+          url: this.getApi('api?require=stars'),
           success: this.getStar,
           xhrFields: { withCredentials: true }
         });
@@ -70,26 +63,11 @@ export default {
     },
     information() {
       if (!this.show[2]) {
-        $.ajax({
-          url: this.api + "api?require=information",
-          success: json => {
-            this.selfInfor = json.information;
-          },
-          xhrFields: { withCredentials: true }
-        });
         this.updateView(3);
       }
     },
     relationship() {
       if (!this.show[3]) {
-        $.ajax({
-          url: this.api + "api?require=relationship",
-          success: json => {
-            this.fans = json.fans;
-            this.follows = json.follow;
-          },
-          xhrFields: { withCredentials: true }
-        });
         this.updateView(4);
       }
     },
@@ -100,9 +78,9 @@ export default {
       this.stars = json.stars;
       this.authorInfo = json.data;
       this.articleInfo = json.article;
-      this.len[0] = this.authorInfo.fans.length;
-      this.len[1] = this.authorInfo.follow.length;
-      this.authorInfo.image = this.api + this.authorInfo.image;
+      this.fansNumber = this.authorInfo.fans.length;
+      this.followNumber = this.authorInfo.follow.length;
+      this.authorInfo.image = this.getApi(this.authorInfo.image);
       this.updateStar();
     },
     getStar(json) {
@@ -128,17 +106,17 @@ export default {
       this.show = [false, false, false, false];
       this.show[index - 1] = true;
     },
-    request() {
+    requestPersonBlogInformation() {
       let personalPromise = new Promise((resolve, reject) => {
         $.ajax({
-          url: this.api + "api?require=personal",
+          url: this.getApi('api?require=personal'),
           success: resolve,
           xhrFields: { withCredentials: true }
         });
       });
       let starPromise = new Promise((resolve, reject) => {
         $.ajax({
-          url: this.api + "api?require=stars",
+          url: this.getApi('api?require=stars'),
           success: resolve,
           xhrFields: { withCredentials: true }
         });
@@ -146,27 +124,14 @@ export default {
       let allPromise = Promise.all([personalPromise, starPromise]);
       allPromise.then(([personal, JSONstars]) => {
         personal.stars = JSONstars.stars;
+        console.log(personal)
         this.getData(personal);
       });
     }
   },
+  computed: mapGetters(['getUser', 'getApi']),
   mounted() {
-    if (parseCookie(document.cookie).id) {
-      $.ajax({
-        type: "get",
-        url: this.api + "login",
-        xhrFields: {
-          withCredentials: true
-        },
-        success: data => {
-          if (data.status === "success") {
-            this.name = data.name;
-            this.portrait += data.image;
-          }
-        }
-      });
-      this.request();
-    }
+    this.requestPersonBlogInformation();
   },
   components: {
     blogStar: BlogStar,

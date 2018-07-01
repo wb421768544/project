@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Home from '@/components/Home';
+import Home from '@/components/homePage/Home';
 import LogIn from '@/components/LogIn';
 import SignUp from '@/components/SignUp';
 import User from '@/components/user/User';

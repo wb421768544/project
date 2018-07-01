@@ -9,7 +9,7 @@ const router = express.Router();
 var options = { //Option of SQL
   host: 'localhost',
   user: 'root',
-  password: 'WANGBING520',
+  password: '3.3.0.',
   database: 'mydatabase',
   useConnectionPooling: true
 };

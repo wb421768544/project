@@ -8,7 +8,7 @@
             <div class="author-info-box">
               <span class="author-name">{{authorInfor.name}}</span><br />
               <span class="time">{{new Date(parseInt(article.timer)).toLocaleString()}}</span>
-              <span class="re-editor" v-if="authorInfor.id === self.id">
+              <span class="re-editor" v-if="authorInfor.id === getUser.id">
                 <router-link :to="'/edit/' + article.article_id">· 编辑</router-link>
               </span>
             </div>
@@ -20,29 +20,27 @@
         </div>
       </article>
       <author-block :article="article" :author="authorInfor" />
-      <side-icon :article="article" :author="authorInfor" :self="self" />
-      <comments-part :self="self" :comments="comments" />
+      <side-icon :article="article" :author="authorInfor" />
+      <comments-part :comments="comments" />
     </div>
     <img src="../../assets/top.svg" class="top" @click="goBack">
   </div>
 </template>
 
 <script>
-import SideIcon from './show/SideIcon'
-import { mavonEditor } from "mavon-editor"
-import AuthorBlock from './show/AuthorBlock'
-import CommentsPart from './show/CommentsPart'
+import { mapGetters } from 'vuex';
+import SideIcon from './show/SideIcon';
+import { mavonEditor } from "mavon-editor";
+import AuthorBlock from './show/AuthorBlock';
+import CommentsPart from './show/CommentsPart';
 
 export default {
   data() {
     return {
-      api: 'http://' + location.hostname + ':8080/',
-      srcImg: '',
       show: true,
       authorInfor: {},
       article: {},
       comments: [],
-      self: {},
       value: ''
     }
   },
@@ -59,38 +57,29 @@ export default {
         this.comments = article.comments;
         this.article = article.articleContent;
         this.authorInfor = article.author;
-        this.authorInfor.image = this.api + this.authorInfor.image;
+        this.authorInfor.image = this.getApi(this.authorInfor.image);
         this.value = this.article.content;
       }else{
         alert(json.reason);
         this.$router.replace('/');
       }
     },
-    getBaseData(json) {
-      json.image = this.api + json.image;
-      this.self = json;
-    },
     goBack() {
       $(document.body).animate({scrollTop: '0px'});
     }
   },
+  computed: mapGetters(['getApi', 'getUser']),
   mounted() {
     $.ajax({
-      url: this.api + 'article?id=' + this.$route.params.id,
+      url: this.getApi('article?id=' + this.$route.params.id),
       type: 'post',
       success: this.getData,
-      xhrFields: {withCredentials: true}
-    });
-    $.ajax({
-      url: this.api + 'login',
-      type: 'get',
-      success: this.getBaseData,
       xhrFields: {withCredentials: true}
     });
   },
   beforeRouteUpdate(to, from, next) {
     $.ajax({
-      url: 'http://' + location.hostname + ':8080/article?id=' + to.params.id,
+      url: this.getApi('article?id=' + to.params.id),
       type: 'post',
       success: this.getData,
       xhrFields: {withCredentials: true}

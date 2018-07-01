@@ -1,27 +1,46 @@
 <template>
     <div class="relationship">
-        <ul v-for="(people, index) in arr" :key="index">
-            <li v-if="index == 0">关注我的</li>
-            <li v-else>我的关注</li>
-            <li v-for="(obj, cur) in people" :key="cur">
+        <ul>
+            <li>关注我的</li>
+            <li v-for="(item, index) in fans" :key="index">
                 <p>
-                    <img :src="api + obj.image" class="portrait">
-                    <span>{{obj.name}}</span>
-                    <button v-if="index == 1" class="focus">{{status}}</button>
+                    <img :src="$store.getters.getApi(item.image)" class="portrait">
+                    <span>{{item.name}}</span>
                 </p>
             </li>
-        </ul>    
+        </ul>
+        <ul>
+          <li>我的关注</li>
+          <li v-for="(item, index) in follows" :key="index">
+              <p>
+                  <img :src="$store.getters.getApi(item.image)" class="portrait">
+                  <span>{{item.name}}</span>
+                  <button class="focus">{{status}}</button>
+              </p>
+          </li>
+        </ul>
     </div>
 </template>
 
 <script>
 export default {
     name: 'relationship',
-    props: ['arr', 'api'],
     data() {
         return {
-            status: '已关注'
+            status: '已关注',
+            fans: {},
+            follows: {}
         };
+    },
+    mounted() {
+      $.ajax({
+        url: this.$store.getters.getApi('api?require=relationship'),
+        success: json => {
+          this.fans = json.fans;
+          this.follows = json.follow;
+        },
+        xhrFields: { withCredentials: true }
+      });
     }
 }
 </script>

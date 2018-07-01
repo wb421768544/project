@@ -9,7 +9,7 @@ var options = {
   //Option of SQL
   host: 'localhost',
   user: 'root',
-  password: 'WANGBING520',
+  password: '3.3.0.',
   database: 'mydatabase',
   useConnectionPooling: true
 };
@@ -145,36 +145,44 @@ function uploadArt(req, res, id) {
   });
   var insertIntoArt =
     `insert into article 
-    (id, title, type, content, timer, number, article_id, star, comment, starJSON, commentJSON) 
-    values (?,?,?,?,?,?,?,?,?,?,?)`;
-
-  client.query(
-    insertIntoArt, [
-      id,
-      artInfo.title,
-      artInfo.type,
-      artInfo.value,
-      artInfo.timer,
-      0,
-      id + artInfo.timer,
-      0,
-      0,
-      "{}",
-      "{}"
-    ],
-    err => {
-      if (err) {
-        console.log("insert article err:", err.message);
-        res.send({
-          flag: false
-        });
-      } else {
-        res.send({
-          flag: true,
-          reason: "success!",
-          article_id: id + artInfo.timer
-        });
-      }
+    (id, name, title, type, content, timer, number, article_id, star, comment, starJSON, commentJSON) 
+    values (?,?,?,?,?,?,?,?,?,?,?,?)`;
+  client.query('select name from user where(id=?)', [id], (err, results) => {
+    if(err) {
+      return res.send({
+        flag: false,
+        reason: 'Server Error!'
+      });
     }
-  );
+    client.query(
+      insertIntoArt, [
+        id,
+        results[0],
+        artInfo.title,
+        artInfo.type,
+        artInfo.value,
+        artInfo.timer,
+        0,
+        id + artInfo.timer,
+        0,
+        0,
+        "{}",
+        "{}"
+      ],
+      err => {
+        if (err) {
+          console.log("insert article err:", err.message);
+          res.send({
+            flag: false
+          });
+        } else {
+          res.send({
+            flag: true,
+            reason: "success!",
+            article_id: id + artInfo.timer
+          });
+        }
+      }
+    );
+  });
 }

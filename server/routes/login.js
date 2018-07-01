@@ -6,7 +6,7 @@ var router = express.Router();
 var options = {
   host: "localhost",
   user: "root",
-  password: "WANGBING520",
+  password: "3.3.0.",
   database: "mydatabase",
   useConnectionPooling: true
 };
@@ -127,18 +127,21 @@ function addToSession(req, res) {
 }
 
 function getUserData(id, res) {
-  var selectUserId = "select *from user where(id=?)";
+  var selectUserId = "select id,name,image,style,phone,eMail from user where(id=?)";
   client.query(selectUserId, [id], function (err, results) {
     if (err) {
+      // res.writeHead(500);
+      res.send({
+        flag: false,
+        reason: 'Server Error!'
+      });
       return console.log('Query user data err:', err.message);
     } else {
-      let json = results[0];
-      delete json.password;
-      delete json.phone;
-      json.status = "success";
-      json.counter = true;
-      json.flag = true;
-      res.send(json);
+      // res.writeHead(200);
+      res.send({
+        userInformation: results[0],
+        flag: true
+      });
     }
   });
 }

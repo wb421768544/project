@@ -3,59 +3,41 @@
     <div class="comment-block">
       <span>评论</span>
       <div class="comment-part">
-        <img v-if="self.status != 'error'" :src="self.image" class="portrait"/>
+        <img v-if="isLogin" :src="getApi(getUser.image)" class="portrait"/>
         <img v-else src="../../../assets/tourist.svg" class="portrait"/>
-        <textarea name="comment"
-                  class="auto-input"
-                  :placeholder="self.status != 'error'? '说说你的看法' : '登陆后方可评论'"
-                  :disabled="self.status == 'error'? true : false"
-                  maxlength="1000"
-                  @keydown.enter="increase"
-                  v-show="flag"
-                  @click="toggle">
-        </textarea><br v-show="flag">
-        <div id="autoInput" class="auto-input div-auto-input" contenteditable="true" @blur="judge" v-show="!flag"></div>
+        <div id="autoInput" class="auto-input div-auto-input" contenteditable="true" @blur="judge"></div>
         <span class="explain">Ctrl + Enter</span>
         <button class="btn-comment" @click="submit">评论</button>
       </div>
-      <div v-if="comments.length == 0">还没有人评论。。。 快来抢沙发~</div>
+      <p v-if="comments.length == 0">还没有人评论。。。 快来抢沙发~</p>
       <div v-for="(item, index) in comments" :key="index" class="comments" @mouseenter="isSelfComment" @mouseleave="hiddenIcon">
-        <img :src="api + item.image" class="img">
+        <img :src="getApi(item.image)" class="img">
         <span class="name">{{item.name}}</span>
+        <span class="timer">{{new Date(parseInt(item.timer)).toLocaleString()}}</span>
         <p class="comment-content">{{item.content}}</p>
-        <!-- <i class="praise" @click="delComment(item.timer, item.article_id)"></i> -->
-        <i class="delete" @click="delComment(item.timer, item.article_id, index)" :class="[{'show': item.id == self.id}]"></i>
+        <!-- <i class="praise" @click="点赞"></i> -->
+        <i class="delete" @click="delComment(item.timer, item.article_id, index)" :class="[{'show': item.id == getUser.id}]"></i>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      api: "http://" + location.hostname + ":8080/",
       flag: true,
       text: "",
-      image: "../../../assets/tourist.svg"
     };
   },
-  props: ["comments", "self"],
+  props: ["comments"],
   methods: {
     isSelfComment() {
       $('.show', $(event.target)).css('visibility', 'visible');
     },
     hiddenIcon() {
       $('.show', $(event.target)).css('visibility', 'hidden');
-    },
-    toggle() {
-      if (this.self.status == "error") {
-        return;
-      }
-      this.flag = !this.flag;
-      this.$nextTick(() => {
-        $("#autoInput").focus();
-      });
     },
     judge() {
       if ($("#autoInput")[0].innerHTML == "") {
@@ -71,21 +53,20 @@ export default {
         return alert("打的字太多啦。");
       }
       $("#autoInput").text("");
-      var i = this.self.image.indexOf("image");
       var data = {
         timer: Date.now(),
         content: comment,
-        name: this.self.name,
+        name: this.getUser.name,
         article_id: this.$route.params.id,
-        image: this.self.image.substring(i)
+        image: this.getApi(this.getUser.image)
       };
       $.ajax({
-        url: this.api + "submit?action=comment",
+        url: this.getApi('submit?action=comment'),
         type: "post",
         data,
         success: json => {
           if (json.flag) {
-            data.id = this.self.id;
+            data.id = this.getUser.id;
             this.comments.unshift(data);
           }
         },
@@ -95,8 +76,7 @@ export default {
     delComment(timer, id, index) {
       if (confirm("确定要删除这条评论吗？")) {
         $.ajax({
-          url:
-            this.api + `submit?action=delete&timer=${timer}&article_id=${id}`,
+          url: this.getApi(`submit?action=delete&timer=${timer}&article_id=${id}`),
           type: "get",
           xhrFields: { withCredentials: true },
           success: json => {
@@ -107,7 +87,8 @@ export default {
         });
       }
     }
-  }
+  },
+  computed: mapGetters(['getApi', 'getUser', 'isLogin'])
 };
 </script>
 
@@ -122,19 +103,16 @@ export default {
   background-size: cover;
   cursor: pointer;
 }
-
 .praise {
   background-image: url(../../../assets/praise.svg);
 }
 .delete {
   background-image: url(../../../assets/delete.svg);
 }
-
 .praise-after,
 .praise:hover {
   background-image: url(../../../assets/praise-after.svg);
 }
-
 .delete:hover {
   background-image: url(../../../assets/delete-after.svg);
 }
@@ -219,7 +197,7 @@ export default {
   font-size: 1.6em;
   border-radius: 5px;
   color: black;
-  margin: 0 0 30px 10px;
+  margin: 10px 0 40px 10px;
   box-sizing: border-box;
   border: #dddddd 0.5px solid;
   display: inline-block;
@@ -239,11 +217,12 @@ export default {
 .auto-input:focus {
   border: rgb(0, 127, 255) 0.5px solid;
 }
-.div-auto-input {
-  margin-bottom: 49px;
-}
 .comment-content {
   word-wrap: break-word;
   white-space:pre-line;
+}
+.timer {
+  float: right;
+  color: gray;
 }
 </style>

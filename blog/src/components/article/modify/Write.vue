@@ -9,7 +9,7 @@
           发布
           <i class="icon-slide-up" :class="{'icon-slide-down': flag}"></i>
         </span>
-        <portrait-part :name="name" :portrait="portrait" class="portrait-part" />
+        <portrait-part class="portrait-part" />
         <div class="option" v-show="flag">
           <p>发布文章</p>
           <p>选择分类</p>
@@ -27,10 +27,11 @@
   </div>
 </template>
 <script>
-import { mavonEditor } from "mavon-editor";
+import { mapGetters } from 'vuex';
+import Published from './published';
 import "mavon-editor/dist/css/index.css";
 import Portrait from '../../bar/Portrait';
-import Published from './published';
+import { mavonEditor } from "mavon-editor";
 export default {
   components: {
     mavonEditor,
@@ -40,39 +41,24 @@ export default {
   data() {
     return {
       id: '',
-      name: '',
-      value: '',
-      title: '',
-      flag: false,
-      portrait: '',
-      published: false,
       imgs: [],
-      api: 'http://' + location.hostname + ':8080/'
+      title: '',
+      value: '',
+      flag: false,
+      published: false,
     };
-  },
-  computed: {
-    watchTitle: {
-      get() {
-        return this.title;
-      },
-      set(val) {
-        val = val.trim();
-        $('title').text('写文章-WB-' + val);
-        this.title = val;
-      }
-    }
   },
   methods: {
      $imgAdd(pos, $file) {
       var formdata = new FormData();
       var xhr = new XMLHttpRequest();
       formdata.append('image' + pos, $file);
-      xhr.open('post', this.api + 'add?action=image');
+      xhr.open('post', this.getApi('add?action=image'));
       xhr.onload = () => {
         if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
           let json = JSON.parse(xhr.responseText);
           if(json.flag) {
-           this.$refs.md.$img2Url(pos, this.api + 'articles/art_imgs/' + json.url);
+           this.$refs.md.$img2Url(pos, this.getApi(`articles/art_imgs/${json.url}`));
            this.imgs.push(json.url);
           }else{
             alert(json.reason);
@@ -111,7 +97,7 @@ export default {
        $.ajax({
          type: 'post',
          data: info,
-         url: this.api + 'add?action=article',
+         url: this.getApi('add?action=article'),
          success: (json) => {
           if(json.flag) {
             this.id = json.article_id;
@@ -126,26 +112,27 @@ export default {
        });
      }
   },
+  computed: {
+    watchTitle: {
+      get() {
+        return this.title;
+      },
+      set(val) {
+        val = val.trim();
+        $('title').text('写文章-WB-' + val);
+        this.title = val;
+      }
+    },
+    ...mapGetters(['isLogin', 'getUser', 'getApi'])
+  },
   mounted() {
     $('title').text('写文章-WB');
     $('.option span').click(function(){
       $(this).addClass('checked').siblings().removeClass('checked');
     });
-    $.ajax({
-      method: "get",
-      url: this.api + "login",
-      xhrFields: {
-        withCredentials: true
-      },
-      success: (data) => {
-        if (data.status === "success") {
-          this.name = data.name;
-          this.portrait = this.api + data.image;
-        }else{
-          this.$router.push('/login');
-        }
-      }
-    });
+    if(!this.isLogin) {
+      this.$router.push('/login');
+    }
     $("html").click(() => {
       var $target = $(event.target);
       if(

@@ -14,7 +14,7 @@
             {{people.star}}
           </span>
           <span class="icon" title="评论">
-            <img src="../../assets/chat-bubble.svg">
+            <img src="@/assets/chat-bubble.svg">
             {{people.comment}}
           </span>
         </button>
@@ -25,11 +25,6 @@
 
 <script>
 export default {
-  data() {
-      return {
-          api: "http://" + location.hostname + ':8080' + "/api?require="
-      };
-  },
   methods: {
     goToArticle(article_id) {
       this.$router.push('/article/' + article_id);
@@ -40,13 +35,13 @@ export default {
       if($target.is('.have-star')) {
         $target.removeClass('have-star');
         num = -1;
-      } else{
+      } else {
         $target.addClass('have-star');
         num = 1;
       }
       this.arr[index][cur].star = parseInt(this.arr[index][cur].star) + num;
       var name = index == 0 ? this.author : this.arr[index][cur].name;
-      var requerURL = this.api + 'updatestar&num=' + num + '&article_id=' + this.arr[index][cur].article_id + '&name=' + name;
+      var requerURL = this.$store.getters.getApi(`api?require=updatestar&num=${num}&article_id=${this.arr[index][cur].article_id}&name=${name}`);
       $.ajax({
         url: requerURL,
         xhrFields:{withCredentials:true},

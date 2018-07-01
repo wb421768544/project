@@ -1,7 +1,7 @@
 <template>
   <div class="side-icon">
     <div title="点击收藏" @click="star">
-      <i class="icon-star icon" :class="[{'icon-star-after': self.id in starJSON}]"></i>
+      <i class="icon-star icon" :class="[{'icon-star-after': getUser.id in starJSON}]"></i>
       <span class="num">{{article.star}}</span>
     </div>
     <div title="查看评论" @click="comment">
@@ -18,17 +18,18 @@
 </template>
 
 <script>
-import scroll from '../../../methods/scroll'
+import { mapGetters } from 'vuex';
+import scroll from '../../../methods/scroll';
 export default {
   data() {
     return {
       starJSON: {}
     };
   },
-  props: ['article', 'author', 'self'],
+  props: ['article', 'author'],
   methods: {
     star() {
-      var url = 'http://localhost:8080/api?require=updatestar&num=';
+      var url = this.getApi('api?require=updatestar&num=');
       var num = 0;
       if($('.icon-star').is('.icon-star-after')) {
         $('.icon-star').removeClass('icon-star-after');
@@ -37,7 +38,7 @@ export default {
         $('.icon-star').addClass('icon-star-after');
         num = 1;
       }
-      url += num + '&article_id=' + this.article.article_id + '&name=' + this.author.name;
+      url += `${num}&article_id=${this.article.article_id}&name=${this.author.name}`;
       $.ajax({
         url,
         success(json) {
@@ -53,6 +54,7 @@ export default {
       $('.comment-block')[0].scrollIntoView();
     }
   },
+  computed: mapGetters(['getUser', 'getApi']),
   mounted() {
     scroll($('.side-icon')[0]);
     getFlag(this);

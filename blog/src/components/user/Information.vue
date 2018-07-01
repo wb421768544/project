@@ -2,29 +2,29 @@
   <div class="info">
     <p>
       头像:
-      <img :src="imgSrc" class="portrait" @click="changeImg">
+      <img :src="getApi(getUser.image)" class="portrait" @click="changeImg">
     </p>
     <p>
       皮肤:<span></span>
     </p>
     <p>
       我的用户名:
-      <input type="text" :value="selfInfor.id" disabled="true">
+      <input type="text" :value="getUser.id" disabled="true">
     </p>
     <p>
       我的昵称:
       <img src="@/assets/modify-pen.svg" class="icon-pen">
-      <input type="text" :value="selfInfor.name" disabled="true">
+      <input type="text" :value="getUser.name" disabled="true">
     </p>
     <p>
       绑定的手机:
-      <input type="text" :value="selfInfor.phone" disabled="true">
+      <input type="text" :value="getUser.phone" disabled="true">
     </p>
     <p>
       绑定的邮箱:
-      <input type="text" :value="selfInfor.eMail" disabled="true">
+      <input type="text" :value="getUser.eMail" disabled="true">
     </p>
-    <div v-if="!flag" id="file">
+    <div v-if="true" id="file">
       <div>
         <article id="upload" @change="submit">
           <form id="form">
@@ -50,15 +50,13 @@
 
 <script>
 import Move from "@/methods/move";
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      src: "",
-      flag: false,
-      api: "http://" + location.hostname + ":8080/"
+      flag: false
     };
   },
-  props: ["selfInfor", "imgSrc"],
   methods: {
     changeImg() {
       $("#file").css("display", "block");
@@ -75,30 +73,36 @@ export default {
         $(".src-img")[0].src = URL.createObjectURL(file);
       }
     },
-    save() {}
-  },
-  mounted() {
-    var self = this;
-    $(".icon-pen").click(function() {
-      $(this).next().attr("disabled", false).change(() => {
-        $.ajax({
-          url: self.api + "submit?action=name&name=" + $(this).next().val(),
-          type: "get",
-          success(json) {
-            if (json.flag) {
-              alert("修改成功");
-              location.reload();
-            } else {
-              alert("修改失败");
-            }
-          },
-          xhrFields: { withCredentials: true }
+    save() {},
+    bindClickEventToIconPenClass() {
+      var self = this;
+      var img = document.querySelector('#select-container img');
+      var select = document.querySelector('#select');
+      Move(select, img);
+      $(".icon-pen").click(function() {
+        $(this).next()
+        .attr("disabled", false)
+        .change(() => {
+          $.ajax({
+            type: "get",
+            url: self.getApi('submit?action=name&name=' + $(this).next().val()),
+            success(json) {
+              if (json.flag) {
+                alert("修改成功");
+                location.reload();
+              } else {
+                alert("修改失败");
+              }
+            },
+            xhrFields: { withCredentials: true }
+          });
         });
       });
-    });
-    var select = $("#select")[0];
-    var img = $("#select-container img")[0];
-    Move(select, img);
+    }
+  },
+  computed: mapGetters(['getApi', 'getUser']),
+  mounted() {
+    // this.bindClickEventToIconPenClass();
   }
 };
 </script>

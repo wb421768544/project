@@ -24,7 +24,7 @@
             <router-link to="/signup">注册</router-link>
           </li>
           <li v-else>
-            <portrait-part :name="name" :portrait="portrait"></portrait-part>
+            <portrait-part></portrait-part>
           </li>
       </ul>       <!-- ul.right -->
     </div>      <!--top-bar -->
@@ -41,9 +41,7 @@ export default {
   data() {
     return {
       show: true,
-      name: '',
       flag: false,
-      portrait: '',
       checkPath: true
     };
   },
@@ -52,6 +50,29 @@ export default {
       document.cookie = "id = ''";
       this.$router.push("/");
       location.reload();
+    },
+    hideTopBar() {
+      var clear = 0, last = 0;
+      var $window = $(window);
+      window.onscroll = () => {
+        clearTimeout(clear);
+        clear = setTimeout(() => {
+          var now = $window.scrollTop();
+          if(now > last && now > 600) {
+            this.show = false;
+          } else if (now < last || now < 600) {
+            this.show = true;
+          }
+          last = now;
+        }, 100);
+      };
+    },
+    requestUserInformation() {
+      this.$store.dispatch('getUserInformation').then(() => {
+        this.flag = true;
+      }).catch((reason) => {
+        console.error(reason);
+      });
     }
   },
   components: {
@@ -60,37 +81,9 @@ export default {
   mounted() {
     this.checkPath = checkPath(this.$route);
     if (parseCookie(document.cookie).id && !this.flag) {
-      let api = 'http://' + location.hostname + ':8080/';
-      let str = api + "login";
-      $.ajax({
-        method: "get",
-        url: str,
-        xhrFields: {
-          withCredentials: true
-        },
-        success: (data) => {
-          if (data.status === "success") {
-            this.flag = true;
-            this.name = data.name;
-            this.portrait = api + data.image;
-          }
-        }
-      });
+      this.requestUserInformation();
     }
-    var clear = 0, last = 0;
-    var $window = $(window);
-    window.onscroll = () => {
-      clearTimeout(clear);
-      clear = setTimeout(() => {
-        var now = $window.scrollTop();
-        if(now > last && now > 600) {
-          this.show = false;
-        } else if (now < last || now < 600) {
-          this.show = true;
-        }
-        last = now;
-      }, 100);
-    };
+    this.hideTopBar();
   },
   watch: {
     $route(to, from) {

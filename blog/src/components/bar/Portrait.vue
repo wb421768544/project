@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img :src="portrait" id="portrait" :title="name" @click="show = !show">
+    <img :src="getApi(getUser.image)" id="portrait" :title="getUser.name" @click="show = !show">
     <ul class="list" v-show="show">
       <li><router-link to="/user">我的博客</router-link></li>
       <li><router-link to="/star">收藏</router-link></li>
@@ -11,20 +11,21 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
       show: false
     };
   },
-  props: ['portrait', 'name'],
   methods: {
     logout() {
       document.cookie = "id = ''";
       this.$router.push("/");
       location.reload();
     }
-  }
+  },
+  computed: mapGetters(['getUser', 'getApi'])
 }
 </script>
 

@@ -9,7 +9,7 @@
           更新
           <i class="icon-slide-up" :class="{'icon-slide-down': flag}"></i>
         </span>
-        <portrait-part :name="name" :portrait="portrait" class="portrait-part" />
+        <portrait-part class="portrait-part" />
         <div class="option" v-show="flag">
           <p>更新文章</p>
           <p>选择分类</p>
@@ -26,6 +26,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import { mavonEditor } from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
 import Portrait from '../../bar/Portrait';
@@ -37,12 +38,9 @@ export default {
   data() {
     return {
       id: '',
-      name: '',
       value: '',
       title: '',
       flag: false,
-      portrait: '',
-      api: 'http://' + location.hostname + ':8080/'
     };
   },
   computed: {
@@ -55,19 +53,20 @@ export default {
         $('title').text('写文章-WB-' + val);
         this.title = val;
       }
-    }
+    },
+    ...mapGetters(['getApi'])
   },
   methods: {
      $imgAdd(pos, $file) {
       var formdata = new FormData();
       var xhr = new XMLHttpRequest();
       formdata.append('image' + pos, $file);
-      xhr.open('post', this.api + 'add?action=image');
+      xhr.open('post', this.getApi('add?action=image'));
       xhr.onload = () => {
         if(xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
           let json = JSON.parse(xhr.responseText);
           if(json.flag) {
-           this.$refs.md.$img2Url(pos, this.api + 'articles/art_imgs/' + json.url);
+           this.$refs.md.$img2Url(pos, this.getApi('articles/art_imgs/' + json.url));
           }else{
             alert(json.reason);
           }
@@ -95,7 +94,7 @@ export default {
        $.ajax({
          type: 'post',
          data: info,
-         url: this.api + 'add?action=update',
+         url: this.getApi('add?action=update'),
          success: (json) => {
           if(json.flag) {
             this.$router.push('/article/' + this.$route.params.id);
@@ -111,9 +110,6 @@ export default {
     getData(json) {
       if(json.flag && this.id === json.articleInfor.author.id) {
         let article = json.articleInfor;
-        this.name = article.author.name;
-        this.portrait = this.api + article.author.image;
-
         this.type = article.articleContent.type;
         this.title = article.articleContent.title;
         this.value = article.articleContent.content;
@@ -136,14 +132,14 @@ export default {
       }
     });
     $.ajax({
-      url: this.api + 'login',
+      url: this.getApi('login'),
       type: 'get',
       success: (json) => {
-        this.id = json.id;
-        if(json.status != 'error') {
+        if(json.flag) {
+          this.id = json.userInformation.id;
           $.ajax({
-            url: this.api + 'article?id=' + this.$route.params.id,
-            type: 'post',
+            url: this.getApi('article?id=' + this.$route.params.id),
+            type: 'get',
             success: this.getData,
             xhrFields: {withCredentials: true}
           });
@@ -152,7 +148,7 @@ export default {
         }
       },
       xhrFields: {withCredentials: true}
-    })
+    });
 
   }
 };
