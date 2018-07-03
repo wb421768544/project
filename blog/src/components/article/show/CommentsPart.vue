@@ -3,8 +3,8 @@
     <div class="comment-block">
       <span>评论</span>
       <div class="comment-part">
-        <img v-if="isLogin" :src="getApi(getUser.image)" class="portrait"/>
-        <img v-else src="../../../assets/tourist.svg" class="portrait"/>
+        <img v-if="isLogin" :src="getApi(getUser.image)" class="portrait" />
+        <img v-else src="../../../assets/tourist.svg" class="portrait" />
         <div id="autoInput" class="auto-input div-auto-input" contenteditable="true" @blur="judge"></div>
         <span class="explain">Ctrl + Enter</span>
         <button class="btn-comment" @click="submit">评论</button>
@@ -45,8 +45,12 @@ export default {
       }
     },
     submit() {
-      var comment = $("#autoInput").text();
-      var str = comment.replace(/[\r\n]/g, "").trim();
+      var comment = $("#autoInput").text().trim();
+      $("#autoInput").text("");
+      if(!this.$store.isLogin) {
+        return ;
+      }
+      var str = comment.replace(/[\r\n]/g, "");
       if (str.length == 0) {
         return alert("评论不能为空。");
       } else if (str.length > 1000) {
@@ -58,7 +62,7 @@ export default {
         content: comment,
         name: this.getUser.name,
         article_id: this.$route.params.id,
-        image: this.getApi(this.getUser.image)
+        image: this.getUser.image
       };
       $.ajax({
         url: this.getApi('submit?action=comment'),

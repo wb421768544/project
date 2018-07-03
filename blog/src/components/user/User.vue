@@ -124,7 +124,6 @@ export default {
       let allPromise = Promise.all([personalPromise, starPromise]);
       allPromise.then(([personal, JSONstars]) => {
         personal.stars = JSONstars.stars;
-        console.log(personal)
         this.getData(personal);
       });
     }
@@ -141,14 +140,10 @@ export default {
 };
 </script>
 
-
 <style scoped>
 button {
-  background-color: transparent;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
+  background-color: transparent;
 }
 .menu-bar {
   font-family: Arial, Helvetica, sans-serif;
@@ -200,7 +195,6 @@ button {
 .menu-bar li {
   background-color: white;
 }
-
 .menu-bar > div {
   width: 100%;
   padding: 15px 20px;
@@ -216,19 +210,16 @@ button {
   text-decoration: underline;
 }
 #container {
-  width: 1150px;
-  margin: 100px auto 0 auto;
+  width: 1000px;
   position: relative;
   white-space: nowrap;
+  margin: 100px auto 0 auto;
 }
 .article,
 .side-bar {
   display: inline-block;
 }
-.article {
-  width: 74%;
-}
-
+.article { width: 75%;}
 .side-bar {
   box-sizing: border-box;
   padding: 20px;

@@ -30,7 +30,6 @@ export default {
     methods:{
         submit() {
             event.preventDefault();
-            console.log(this.value);
             if(this.value[0].trim().length == 0) {
               return alert('请输入用户名');
             }

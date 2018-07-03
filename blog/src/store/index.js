@@ -5,12 +5,16 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    api: 'http://' + location.hostname + ':8080/',
-    user: {
-      image: 'image/default.png'
-    },
     flag: false,
-    articleList: []
+    articleList: [],
+    articleTypeList: [],
+    user: { image: 'image/default.png'},
+    api: 'http://' + location.hostname + ':8080/'
+  },
+  mutations: {
+    setArticleTypeList(state, list) {
+      state.articleTypeList = list;
+    }
   },
   getters: {
     getApi: ({ api }) => (path = '') => {
@@ -22,7 +26,9 @@ export default new Vuex.Store({
     isLogin({ flag }) {
       return flag;
     },
-    
+    getArticleTypeList({ articleTypeList }) {
+      return articleTypeList;
+    }
   },
   actions: {
     getUserInformation({ state, getters }) {
@@ -32,8 +38,7 @@ export default new Vuex.Store({
           url: getters.getApi('login'),
           xhrFields: {withCredentials: true},
           success: (json) => {
-            state.flag = json.flag;
-            if(state.flag) {
+            if(state.flag = json.flag) {
               state.user = json.userInformation;
               resolve(json);
             }else {

@@ -2,8 +2,8 @@
   <div>
     <div class="user-nav">
       <img :src="getApi(getUser.image)" />
-      <a><i class="icon-write"></i>写文章</a>
-      <a><i class="icon-personal"></i>个人中心</a>
+      <router-link to="/write"><i class="icon-write"></i>写文章</router-link>
+      <router-link to="/user"><i class="icon-personal"></i>个人中心</router-link>
       <a class="setting">设置</a>
     </div>
     <div class="user-list">
@@ -13,7 +13,7 @@
         </li>
       </ul>
       <div class="article-clist">
-        <article-list :arr="articleArray" />
+        <article-list :arr="articleArray" :art-id-arr="starArticleId"/>
       </div>
     </div>
   </div>
@@ -25,7 +25,8 @@ import ArticleList from '../../bar/ArticleList'
 export default {
   data() {
     return {
-      articleArray: []
+      articleArray: [],
+      starArticleId: []
     }
   },
   methods: {
@@ -39,9 +40,13 @@ export default {
       var options = ['star', 'timer', 'comment'];
       $.ajax({
         type: 'get',
+        xhrFields: {withCredentials: true},
         url: this.getApi(`getarticlelist?start=0&order=${options[num]}`),
         success: (json) => {
-          if(json) {
+          if(json.flag) {
+            this.starArticleId = json.starArticle_id.map( (val) => {
+              return val.article_id;
+            })
             this.articleArray = json.articleList;
           }else{
             console.error(json.reason);

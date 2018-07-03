@@ -29,6 +29,9 @@ export default {
   props: ['article', 'author'],
   methods: {
     star() {
+      if(!this.$store.isLogin) {
+        return alert('请登录');
+      }
       var url = this.getApi('api?require=updatestar&num=');
       var num = 0;
       if($('.icon-star').is('.icon-star-after')) {

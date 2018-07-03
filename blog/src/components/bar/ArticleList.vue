@@ -8,9 +8,9 @@
       {{item.title}}
     </p>
     <button>
-      <span class="icon icon-color"  title="收藏" @click.stop="toggleColor(cur, index)">
+      <span class="icon icon-color" :class="{'have-star': artIdArr.indexOf(item.article_id) != -1}" title="收藏" @click.stop="toggleColor(cur, index)">
         <i class="icon-star"></i>
-       {{item.star}}
+        {{item.star}}
       </span>
       <span class="icon" title="评论">
         <img src="@/assets/chat-bubble.svg">
@@ -33,7 +33,7 @@ export default {
       this.$router.push('/article/' + article_id);
     },
   },
-  props: ['arr'],
+  props: ['arr', 'artIdArr'],
   computed: {
     ...mapGetters(['getApi'])
   }

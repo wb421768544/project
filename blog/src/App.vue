@@ -59,6 +59,7 @@ html {
   height: 100%;
   min-width: 500px;
   overflow-y: scroll;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 .router-link-active {
   color: inherit;

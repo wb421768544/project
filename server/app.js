@@ -49,7 +49,8 @@ app.use(session({
 
 //initialize session.users,and solving cross-domain problems
 app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
+  
+  res.setHeader('Access-Control-Allow-Origin', `http://${req.hostname}:8888`);
   res.setHeader('Access-Control-Allow-Credentials', true);
   req.session.users = req.session.users || {};
   req.session.id = {};
@@ -57,11 +58,11 @@ app.use(function (req, res, next) {
 });
 
 //router
-app.use('/login', login);
+app.use('/add', add);
 app.use('/api', api);
+app.use('/login', login);
 app.use('/submit', submit);
 app.use('/article', article);
-app.use('/add', add);
 app.use('/getarticlelist', getAricleList);
 
 // catch 404 and forward to error handler

@@ -1,6 +1,6 @@
 <template>
   <transition name="show">
-  <div class="top-bar-container" v-if="checkPath" v-show="show">
+  <div class="top-bar-container" v-if="checkPath"  v-show="show">
     <div class="top-bar">
       <router-link to="/">
         <img src="../../assets/wb.jpg" id="wb">
@@ -31,7 +31,6 @@
   </div> 
   </transition>
 </template>
-
 
 <script>
 import Portrait from '../bar/Portrait';
@@ -70,9 +69,7 @@ export default {
     requestUserInformation() {
       this.$store.dispatch('getUserInformation').then(() => {
         this.flag = true;
-      }).catch((reason) => {
-        console.error(reason);
-      });
+      }).catch((reason) => {});
     }
   },
   components: {
@@ -100,12 +97,10 @@ export default {
   transition: transform 0.2s;
 }
 .show-enter-to, .show-leave {
-   transform: translateY(0%);
+  transform: translateY(0%);
   transition: transform 0.2s;
 }
-form.focus {
-  border: 1px solid #007fff;
-}
+form.focus { border: 1px solid #007fff;}
 form {
   display: inline-block; 
   border: 1px solid #e6e6e7;
@@ -125,7 +120,6 @@ input {
   border-radius: 2px;
   vertical-align: middle;
   background-color: transparent;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 .top-bar-container {
   top: 0;
@@ -138,7 +132,7 @@ input {
 .top-bar {
   margin: 0 auto;
   min-width: 600px;
-  max-width: 1200px;
+  max-width: 1000px;
   font-size: 1.5em;
   color: #007fff;
   font-weight: bold;
@@ -175,5 +169,7 @@ input {
   color: white;
   border-radius: 0.2em;
   background-color: #007fff;
+  transition: background 0.2s;
 }
+.btn-write-blog:hover { background-color: #0371df;}
 </style>

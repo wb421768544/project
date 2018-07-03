@@ -12,59 +12,113 @@ var options = {
 };
 const client = mysql.createConnection(options);
 
-router.get('/', function(req, res) {
-  var order = req.query.order;
-  var start = parseInt(req.query.start);
-  var orderList = ['timer', 'star', 'comment'];
-  if(orderList.indexOf(order) == -1) {
-    res.send({
-      flag: false,
-      reason: 'No such request is supported!'
-    });
-  }else if(typeof start != 'number'){
-    res.send({
-      flag: false,
-      reason: 'Wrong request!'
-    });
-  }else{
-    getArticleList(req, res, order, start);
+router.get('/', function (req, res) {
+  if (req.query.action == 'type') {
+    getArticleListByTourist(req, res);
+  } else {
+    getArticleList(req, res);
   }
 });
 
 module.exports = router;
 
-function getArticleList(req, res, order, start) {
-  var selectArtcileByOrder = `select name,title,type,timer,article_id,star,comment from article order by ${order} desc limit ${start}, 20`;
-  client.query(selectArtcileByOrder, getArticleList);
-  function getArticleList(err, results) {
-    if(err){
+function getArticleListByTourist(req, res) {
+  var options = {
+    order: req.query.order,
+    start: parseInt(req.query.start)
+  };
+  if (typeof options.start != 'number') {
+    return returnError(res);
+  } else {
+    var selectArticleType = 'select *from article_type';
+    client.query(selectArticleType, (err, results) => {
+      if (err) {
+        return res.send({
+          flag: false,
+          reason: 'Server Error! Please try again later.'
+        });
+      }
+      var type = results.map((val) => {
+        return val.type;
+      });
+      var flag = true;
+      if (type.indexOf(options.order) == -1) {
+        flag = false;
+      }
+      getArticle({
+        flag: flag,
+        articleType: type
+      });
+    });
+  }
+
+  function getArticle(json) {
+    var option = decodeURIComponent(options.order);
+    var selectArtcileByStar = `select name,title,type,timer,article_id from article order by star desc limit ?, 20`;
+    var selectArtcileByOrder = `select name,title,type,timer,article_id from article where(type='${option}') order by star desc limit ?, 20`;
+    client.query(json.flag ? selectArtcileByOrder : selectArtcileByStar, [options.start], (err, results) => {
+      if (err) {
+        console.log('Query article err:', err.message);
+        return res.send({
+          flag: false,
+          reason: 'Server Error! Please try again later.'
+        });
+      }
+      json.flag = true;
+      json.articleList = results;
+      res.send(json);
+    });
+  }
+}
+
+function getArticleList(req, res) {
+  var options = null;
+  try {
+    options = {
+      order: req.query.order,
+      start: parseInt(req.query.start),
+      userId: req.session.users[req.signedCookies.id].id,
+    };
+    var orderList = ['timer', 'star', 'comment'];
+    if (orderList.indexOf(options.order) == -1 || typeof options.start != 'number') {
+      throw new Error();
+    }
+  } catch (e) {
+    return returnError(res);
+  }
+
+  var selectArtcileByOrder = `select name,title,type,timer,article_id,star,comment from article order by ${options.order} desc limit ${options.start}, 20`;
+  client.query(selectArtcileByOrder, (err, results) => {
+    if (err) {
       return res.send({
         flag: false,
         reason: 'Server Error! Please try again later.'
       });
     }
-    getStarArticleId(req, res, {
+    getStarArticleId(options.userId, res, {
       flag: true,
       articleList: results
     });
-  }
+  });
 }
 
-
-function getStarArticleId(req, res, json) {
-  var id = req.session.users[req.signedCookies.id];
-  console.log(id);
-  console.log(req.signedCookies.id);
-  console.log(req.session.users);
-  // var selectStarArticleId = 'select article_id from stars where(id=?)';
-  // client.query(selectStarArticleId, [id], (err, results) => {
-  //   if(err) {
-  //     return res.send({
-  //       flag: false,
-  //       reason: 'Server Error! Please try again later.'
-  //     });
-  //   }
-  //   json.starArticle_id = results;
+function getStarArticleId(userId, res, json) {
+  var selectStarArticleId = 'select article_id from stars where(id=?)';
+  client.query(selectStarArticleId, [userId], (err, results) => {
+    if (err) {
+      return res.send({
+        flag: false,
+        reason: 'Server Error! Please try again later.'
+      });
+    }
+    json.starArticle_id = results;
     res.send(json);
-  // });
+  });
+}
+
+function returnError(res) {
+  return res.send({
+    flag: false,
+    reason: 'Wrong request!'
+  });
 }
