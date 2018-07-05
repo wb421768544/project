@@ -47,7 +47,7 @@ export default {
     submit() {
       var comment = $("#autoInput").text().trim();
       $("#autoInput").text("");
-      if(!this.$store.isLogin) {
+      if(!this.isLogin) {
         return ;
       }
       var str = comment.replace(/[\r\n]/g, "");

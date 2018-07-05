@@ -16,6 +16,7 @@ var api = require('./routes/api');
 var login = require('./routes/login');
 var submit = require('./routes/submit');
 var article = require('./routes/article');
+var signUp = require('./routes/signup');
 var getAricleList = require('./routes/getArticleList');
 
 var app = express();
@@ -62,6 +63,7 @@ app.use('/add', add);
 app.use('/api', api);
 app.use('/login', login);
 app.use('/submit', submit);
+app.use('/signup', signUp);
 app.use('/article', article);
 app.use('/getarticlelist', getAricleList);
 

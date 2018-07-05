@@ -2,7 +2,7 @@
   <div>
     <div class="user-list">
       <ul class="classify">
-        <li v-for="(item, index) in ['推荐', ...getArticleTypeList]" :key="index" :class="{'focus': index == 0}" @click="shift(index)">
+        <li v-for="(item, index) in ['推荐', ...getArticleTypeList]" :key="index" :class="{'focus': index == 0}" @click="shift(index, $event)">
           <a>{{item}}</a>
         </li>
       </ul>
@@ -23,7 +23,7 @@ export default {
     }
   },
   methods: {
-    shift(index) {
+    shift(index, event) {
       var $target = $(event.target);
       $target = $target.is('a') ? $target.parent() : $target;
       $target.addClass('focus').siblings().removeClass('focus');
