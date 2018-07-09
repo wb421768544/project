@@ -1,7 +1,7 @@
 <template>
   <div class="side-icon">
     <div title="点击收藏" @click="star">
-      <i class="icon-star icon" :class="[{'icon-star-after': getUser.id in starJSON}]"></i>
+      <i class="icon-star icon" :class="[{'icon-star-after': getUser.id && (getUser.id in starJSON)}]"></i>
       <span class="num">{{article.star}}</span>
     </div>
     <div title="查看评论" @click="comment">
@@ -26,10 +26,10 @@ export default {
       starJSON: {}
     };
   },
-  props: ['article', 'author'],
+  props: ['article', 'author', 'stars'],
   methods: {
     star() {
-      if(!this.$store.isLogin) {
+      if(!this.isLogin) {
         return alert('请登录');
       }
       var url = this.getApi('api?require=updatestar&num=');
@@ -57,7 +57,7 @@ export default {
       $('.comment-block')[0].scrollIntoView();
     }
   },
-  computed: mapGetters(['getUser', 'getApi']),
+  computed: mapGetters(['getUser', 'getApi', 'isLogin']),
   mounted() {
     scroll($('.side-icon')[0]);
     getFlag(this);

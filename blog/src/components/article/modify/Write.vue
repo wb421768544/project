@@ -131,7 +131,7 @@ export default {
       $(this).addClass('checked').siblings().removeClass('checked');
     });
     if(!this.isLogin) {
-      this.$router.push('/login');
+      this.$router.replace('/login');
     }
     $("html").click(() => {
       var $target = $(event.target);

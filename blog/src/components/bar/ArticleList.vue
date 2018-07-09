@@ -8,7 +8,7 @@
       {{item.title}}
     </p>
     <button>
-      <span class="icon icon-color" :class="{'have-star': artIdArr.indexOf(item.article_id) != -1}" title="收藏" @click.stop="toggleColor(cur, index)">
+      <span class="icon icon-color" :class="{'have-star': artIdArr.indexOf(item.article_id) != -1}" title="收藏" @click.stop="star(index, $event)">
         <i class="icon-star"></i>
         {{item.star}}
       </span>
@@ -32,10 +32,34 @@ export default {
     goToArticle(article_id) {
       this.$router.push('/article/' + article_id);
     },
+    star(index, event) {
+      var num = 0;
+      var target = event.target;
+      var url = this.getApi('api?require=updatestar&num=');
+      var target = $(target).is('span') ? target : target.parentNode;
+      if($(target).is('.have-star')) {
+        $(target).removeClass('have-star');
+        num = -1;
+      }else {
+        $(target).addClass('have-star');
+        num = 1;
+      }
+      url += `${num}&article_id=${this.arr[index].article_id}&name=${this.getUser.name}`;
+      $.ajax({
+        url,
+        success(json) {
+          if(!json.flag) {
+            alert(json.reason);
+          }
+        },
+        xhrFields: {withCredentials: true}
+      });
+      this.arr[index].star = parseInt(this.arr[index].star) + num;
+    }
   },
   props: ['arr', 'artIdArr'],
   computed: {
-    ...mapGetters(['getApi'])
+    ...mapGetters(['getApi', 'getUser'])
   }
 }
 </script>

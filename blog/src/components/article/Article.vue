@@ -20,7 +20,7 @@
         </div>
       </article>
       <author-block :article="article" :author="authorInfor" />
-      <side-icon :article="article" :author="authorInfor" />
+      <side-icon :article="article" :stars="article.starJSON" :author="authorInfor" />
       <comments-part :comments="comments" />
     </div>
     <img src="../../assets/top.svg" class="top" @click="goBack">
@@ -65,7 +65,8 @@ export default {
       }
     },
     goBack() {
-      $(document.body).animate({scrollTop: '0px'});
+      $('html').animate({scrollTop: '0px'});
+      $('body').animate({scrollTop: '0px'});
     }
   },
   computed: mapGetters(['getApi', 'getUser']),

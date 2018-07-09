@@ -21,7 +21,7 @@ module.exports = router;
 function queryArticle(articleId, req, res){
   var counter = 0;
   var articleInfor = {};
-  var selectArticle = 'select article_id,comment,content,star,timer,title,type,id from article where(article_id=?)';
+  var selectArticle = 'select article_id,comment,content,star,timer,title,type,id,starJSON from article where(article_id=?)';
   var selectAuthor = 'select id,name,image from user where(id=?)';
   var selectComments = 'select *from comments where(article_id=?) order by timer desc';
 

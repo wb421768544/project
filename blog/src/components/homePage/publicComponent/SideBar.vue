@@ -3,7 +3,8 @@
     <div class="side-top-bar">
       <p>WB-Blog</p>
       <p>一个帮助开发者成长的地方~</p>
-      <button><a>立即注册</a></button>
+      <button v-if="isLogin"><router-link to="/write">写文章</router-link></button>
+      <button v-else><router-link to="/signup">立即注册</router-link></button>
     </div>
     <div class="label">
       <p>暂时支持以下标签</p>
@@ -15,7 +16,7 @@
 <script>
 import { mapGetters } from 'vuex';
 export default {
-  computed: mapGetters(['getArticleTypeList'])
+  computed: mapGetters(['getArticleTypeList', 'isLogin'])
 }
 </script>
 

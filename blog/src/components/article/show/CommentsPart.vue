@@ -5,6 +5,7 @@
       <div class="comment-part">
         <img v-if="isLogin" :src="getApi(getUser.image)" class="portrait" />
         <img v-else src="../../../assets/tourist.svg" class="portrait" />
+        <span>{{getUser.name}}</span>
         <div id="autoInput" class="auto-input div-auto-input" contenteditable="true" @blur="judge"></div>
         <span class="explain">Ctrl + Enter</span>
         <button class="btn-comment" @click="submit">评论</button>

@@ -49,7 +49,8 @@ function updateStar(id, req, res) {
 
   function getStarJSON(err, results) {
     if (err) {
-      return console.log("Query starJSON err", err.message);
+    }else if(results.length == 0) {
+      return res.send({flag: false, reason: 'article does not exist.'});
     }
     
     var json = JSON.parse(results[0].starJSON);
@@ -62,7 +63,6 @@ function updateStar(id, req, res) {
     (id, article_id, title, author, type, star, comment, timer, name) 
     values(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    var flag = 0, star = 0;
     if(!((json[id] && (num < 0)) || (!json[id] && (num > 0)))) {
       return res.send({
         flag: false,
@@ -87,6 +87,7 @@ function updateStar(id, req, res) {
     client.query(updateArticle, [JSON.stringify(json), star, article_id], handlerErr);
     client.query(updateStarNum, [star, article_id], handlerErr);
 
+    var flag = 0;
     function handlerErr(err) {
       if (err) {
         console.log('Update Star err2:', err.message);
