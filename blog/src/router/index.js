@@ -12,7 +12,6 @@ import Article from '@/components/article/Article';
 import Write from '@/components/article/modify/Write';
 import Rewrite from '@/components/article/modify/Rewrite';
 
-
 Vue.use(Router);
 
 export default new Router({
@@ -34,7 +33,7 @@ export default new Router({
       component: SignUp
     },
     {
-      path: '/user',
+      path: '/user/:id',
       name: 'user',
       component: User
     },

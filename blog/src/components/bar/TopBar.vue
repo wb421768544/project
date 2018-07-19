@@ -5,13 +5,13 @@
       <router-link to="/">
         <img src="../../assets/wb.jpg" id="wb">
       </router-link>
-      <router-link to="/">首页</router-link>
+      <router-link to="/" class="home">首页</router-link>
       <form>
         <input type="text" placeholder="搜索文章">
         <img src="@/assets/search.svg" />
       </form>
       <ul class="right">
-        <li>
+        <li v-if="flag">
           <router-link to="/write">
             <img src="../../assets/write-article.svg" class="write-icon">
             <button class="btn-write-blog">写文章</button>
@@ -131,7 +131,7 @@ input {
 }
 .top-bar {
   margin: 0 auto;
-  min-width: 600px;
+  min-width: 400px;
   max-width: 1000px;
   font-size: 1.5em;
   color: #007fff;
@@ -172,4 +172,9 @@ input {
   transition: background 0.2s;
 }
 .btn-write-blog:hover { background-color: #0371df;}
+@media only screen and (max-width: 600px) {
+   .write-icon, .home {
+    display: none;
+  }
+}
 </style>

@@ -230,4 +230,12 @@ export default {
   float: right;
   color: gray;
 }
+@media only screen and (max-width: 960px ) {
+  .comment-block {
+    width: 100%;
+  }
+  .show {
+    visibility: visible!important;
+  }
+}
 </style>

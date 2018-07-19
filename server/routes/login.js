@@ -130,14 +130,12 @@ function getUserData(id, res) {
   var selectUserId = "select id,name,image,style,phone,eMail from user where(id=?)";
   client.query(selectUserId, [id], function (err, results) {
     if (err) {
-      // res.writeHead(500);
       res.send({
         flag: false,
         reason: 'Server Error!'
       });
       return console.log('Query user data err:', err.message);
     } else {
-      // res.writeHead(200);
       res.send({
         userInformation: results[0],
         flag: true

@@ -3,7 +3,7 @@
     <div class="user-nav">
       <img :src="getApi(getUser.image)" />
       <router-link to="/write"><i class="icon-write"></i>写文章</router-link>
-      <router-link to="/user"><i class="icon-personal"></i>个人中心</router-link>
+      <router-link :to="'/user/' + getUser.id"><i class="icon-personal"></i>个人中心</router-link>
       <a class="setting">设置</a>
     </div>
     <div class="user-list">

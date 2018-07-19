@@ -14,7 +14,7 @@
           <p>更新文章</p>
           <p>选择分类</p>
           <span>前端</span>
-          <span>SQL</span>
+          <span>数据库</span>
           <span>OS</span><br>
           <span>后台</span>
           <span>计算机网络</span>
@@ -40,7 +40,7 @@ export default {
       id: '',
       value: '',
       title: '',
-      flag: false,
+      flag: false
     };
   },
   computed: {
@@ -116,6 +116,16 @@ export default {
       }else{
         this.$router.replace('/');
       }
+    },
+    changeZIndex() {
+      $('.fa-mavon-arrows-alt').click(() => {
+        $('.title').css('z-index', '-1');
+        alert('冯嵘是笨蛋😄');
+      });
+      $('.fa-mavon-compress').click(() => {
+        $('.title').css('z-index', '1');
+        alert('冯嵘是笨蛋😄');
+      });
     }
   },
   mounted() {
@@ -149,7 +159,8 @@ export default {
       },
       xhrFields: {withCredentials: true}
     });
-
+    this.changeZIndex();
+    
   }
 };
 </script>

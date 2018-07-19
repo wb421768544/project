@@ -19,9 +19,9 @@
           <mavon-editor :subfield="false" default-open="preview" :editable="false"  :code-style="'atom-one-dark'" :toolbarsFlag="false" :navigation="false" :boxShadow="false" :value="value" />
         </div>
       </article>
-      <author-block :article="article" :author="authorInfor" />
-      <side-icon :article="article" :stars="article.starJSON" :author="authorInfor" />
-      <comments-part :comments="comments" />
+      <author-block class="shift" :article="article" :author="authorInfor" />
+      <side-icon class="shift" :article="article" :stars="article.starJSON" :author="authorInfor" />
+      <comments-part class="shift-comment" :comments="comments" />
     </div>
     <img src="../../assets/top.svg" class="top" @click="goBack">
   </div>
@@ -73,7 +73,7 @@ export default {
   mounted() {
     $.ajax({
       url: this.getApi('article?id=' + this.$route.params.id),
-      type: 'post',
+      type: 'get',
       success: this.getData,
       xhrFields: {withCredentials: true}
     });
@@ -105,13 +105,15 @@ export default {
   z-index: 2;
 }
  .top {
-  padding: 5px;
-  height: 25px;
+  padding: 6px;
+  height: 18px;
   position: fixed;
-  bottom: 50px;
-  right: 50px;;
+  z-index: 3;
+  bottom: 40px;
+  right: 30px;;
   border-radius: 25px;
   background-color: #fff;
+  box-shadow: 0 0 8px rgba(0,0,0,.05);
 }
 .article-area {
   white-space: nowrap;
@@ -145,4 +147,15 @@ export default {
 }
 .article-title { font-size: 3em;}
 .article-title:hover , .re-editor:hover{ color: #007fff;}
+@media only screen and (max-width: 960px ) {
+  .shift {
+    display: none;
+  }
+  .article-area {
+    width: 99%;
+  }
+  .article {
+    width: 99%;
+  }
+}
 </style>

@@ -36,6 +36,7 @@ export default {
   name: "user",
   data() {
     return {
+      to: '',
       stars: {},
       authorInfo: {},
       articleInfo: {},
@@ -126,16 +127,31 @@ export default {
         personal.stars = JSONstars.stars;
         this.getData(personal);
       });
+    },
+    jumpToPath() {
+      let arr = [this.star, this.information, this.relationship];
+      let options = ['stars', 'information', 'relationship'];
+      let obj = this.$route.path.match(/[_a-z0-9]*$/);
+      let index = options.indexOf(obj[0]);
+      if(index != -1) {
+        arr[index]();
+      }
+      return [obj, index];
     }
   },
   computed: mapGetters(['getUser', 'getApi']),
   mounted() {
     this.requestPersonBlogInformation();
+    let arr = this.jumpToPath();
+    this.to = this.$route.path.substring(0, arr[0].index);
   },
   components: {
     blogStar: BlogStar,
     relationship: Relationship,
     selfInformation: SelfInformation
+  },
+  beforeRouteUpdate(to, from) {
+    this.jumpToPath();
   }
 };
 </script>
@@ -170,10 +186,11 @@ button {
   border-radius: 5px;
   position: absolute;
 }
-.menu-bar li {
+ul li {
   height: 100%;
-  width: 100px;
   padding: 20px;
+  box-sizing: border-box;
+  width: 25%;
   font-size: 12px;
   cursor: pointer;
   margin-top: 10px;
@@ -232,5 +249,13 @@ button {
 .rs,
 .menu-bar > div {
   position: relative;
+}
+@media only screen and (max-width: 960px) {
+  .side-bar {
+    display: none;
+  }
+  #container, .article {
+    width: 100%;
+  }
 }
 </style>

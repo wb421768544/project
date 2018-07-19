@@ -73,4 +73,9 @@ export default {
   font-size: 1.4em;
   color: #b4bec3!important;
 }
+@media only screen and (max-width: 400px) {
+  .classify li{
+    padding: 0 10px;
+  }
+}
 </style>

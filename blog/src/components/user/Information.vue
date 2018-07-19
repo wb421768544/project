@@ -1,27 +1,28 @@
 <template>
   <div class="info">
     <p>
-      头像:
+      <span>头像:</span>
       <img :src="getApi(getUser.image)" class="portrait" @click="changeImg">
     </p>
     <p>
-      皮肤:<span></span>
+      <span>皮肤:</span>
+      <span></span>
     </p>
     <p>
-      我的用户名:
+      <span>我的用户名:</span>
       <input type="text" :value="getUser.id" disabled="true">
     </p>
     <p>
-      我的昵称:
-      <img src="@/assets/modify-pen.svg" class="icon-pen">
+      <span>我的昵称:</span>&nbsp;&nbsp;&nbsp;&nbsp;
       <input type="text" :value="getUser.name" disabled="true">
+      <img src="@/assets/modify-pen.svg" class="icon-pen" @click="changeNickName($event)">
     </p>
     <p>
-      绑定的手机:
+      <span>绑定的手机:</span>
       <input type="text" :value="getUser.phone" disabled="true">
     </p>
     <p>
-      绑定的邮箱:
+      <span>绑定的邮箱:</span>
       <input type="text" :value="getUser.eMail" disabled="true">
     </p>
     <div v-if="true" id="file">
@@ -74,28 +75,21 @@ export default {
       }
     },
     save() {},
-    bindClickEventToIconPenClass() {
-      var self = this;
-      var img = document.querySelector('#select-container img');
-      var select = document.querySelector('#select');
-      Move(select, img);
-      $(".icon-pen").click(function() {
-        $(this).next()
-        .attr("disabled", false)
-        .change(() => {
-          $.ajax({
-            type: "get",
-            url: self.getApi('submit?action=name&name=' + $(this).next().val()),
-            success(json) {
-              if (json.flag) {
-                alert("修改成功");
-                location.reload();
-              } else {
-                alert("修改失败");
-              }
-            },
-            xhrFields: { withCredentials: true }
-          });
+    changeNickName(event) {
+      let $ipt = $(event.target).prev();
+      $ipt.attr('disabled', false).change(() => {
+        $.ajax({
+          type: "get",
+          url: this.getApi('submit?action=name&name=' + $ipt.val()),
+          success(json) {
+            if (json.flag) {
+              alert("修改成功");
+              location.reload();
+            } else {
+              alert("修改失败");
+            }
+          },
+          xhrFields: { withCredentials: true }
         });
       });
     }
@@ -111,6 +105,7 @@ export default {
 <style scoped>
 input {
   font-size: 1.1em;
+  margin-left: 200px;
 }
 .icon-img {
   height: 1.5em;
@@ -118,7 +113,7 @@ input {
   margin-right: 5px;
   vertical-align: middle;
 }
-#file {
+ #file {
   display: none;
   position: fixed;
   top: 0;
@@ -127,7 +122,7 @@ input {
   height: 100%;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-}
+}/*
 #file > div {
   height: 400px;
   width: 600px;
@@ -139,19 +134,6 @@ input {
 #upload {
   position: relative;
 }
-input[name="portrait"],
-#upload span {
-  position: absolute;
-}
-input[name="portrait"] {
-  top: 0;
-  left: 0;
-  opacity: 0;
-  width: 100px;
-  height: 100%;
-  z-index: 2;
-}
-
 #upload span {
   line-height: 1em;
   width: 100px;
@@ -199,7 +181,6 @@ input[name="portrait"] {
   border: 1px solid red;
 }
 .src-img {
-  /* height: 150px; */
   max-height: 200px;
   width: 150px;
   box-sizing: border-box;
@@ -221,35 +202,30 @@ input[name="portrait"] {
 }
 #select:active {
   cursor: move;
-}
+} */
 .info {
   background-color: white;
   font-size: 1.5em;
-  position: relative;
 }
 p {
+  white-space: nowrap;
   line-height: 50px;
   padding: 20px 100px;
   border: 1px solid #f7f8fa;
-  position: relative;
-}
-.icon-pen,
-input,
-.portrait {
-  position: absolute;
-  top: 37px;
-}
-.icon-pen {
-  right: 250px;
-}
-input {
-  right: 400px;
 }
 .portrait {
   height: 4em;
   width: 4em;
   border-radius: 2em;
-  right: 500px;
-  top: 16px;
+  vertical-align: bottom;
+  margin-left: 60px;
+}
+@media only screen and (max-width: 600px) {
+  input {
+    margin-left: 30px;
+  }
+  p {
+    padding: 20px 50px;
+  }
 }
 </style>

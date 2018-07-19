@@ -74,4 +74,10 @@ p {
   font-size: 1.5em;
   margin: 9px 0;
 }
+
+@media only screen and (max-width: 980px) {
+  .side-bar {
+    display: none;
+  }
+}
 </style>

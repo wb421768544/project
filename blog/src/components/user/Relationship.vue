@@ -1,25 +1,25 @@
 <template>
-    <div class="relationship">
-        <ul>
-            <li>关注我的</li>
-            <li v-for="(item, index) in fans" :key="index">
-                <p>
-                    <img :src="$store.getters.getApi(item.image)" class="portrait">
-                    <span>{{item.name}}</span>
-                </p>
-            </li>
-        </ul>
-        <ul>
-          <li>我的关注</li>
-          <li v-for="(item, index) in follows" :key="index">
-              <p>
-                  <img :src="$store.getters.getApi(item.image)" class="portrait">
-                  <span>{{item.name}}</span>
-                  <button class="focus">{{status}}</button>
-              </p>
-          </li>
-        </ul>
-    </div>
+  <div class="relationship">
+    <ul>
+      <li>关注我的</li>
+      <li v-for="(item, index) in fans" :key="index">
+          <p>
+            <img :src="$store.getters.getApi(item.image)" class="portrait">
+            <span>{{item.name}}</span>
+          </p>
+      </li>
+    </ul>
+    <ul>
+      <li>我的关注</li>
+      <li v-for="(item, index) in follows" :key="index">
+        <p>
+          <img :src="$store.getters.getApi(item.image)" class="portrait">
+          <span>{{item.name}}</span>
+          <button class="focus">{{status}}</button>
+        </p>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -65,7 +65,7 @@ export default {
     font-size: 0.8em;
     padding: 9px 25px;
     border-radius: 5px;
-    margin-left: 450px;
+    margin-left: 35%;
     background-color: #92c452;
 }
 .focus:hover { background-color: #a7cf74;}

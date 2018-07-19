@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 
-var options = {
+const options = {
   host: "localhost",
   user: "root",
   password: "3.3.0.",
@@ -13,103 +13,71 @@ var options = {
 const client = mysql.createConnection(options);
 
 router.use('/', function(req, res){
-  queryArticle(req.query.id, req, res);
+  queryArticle(req.query.id, res);
 });
 
 module.exports = router;
 
-function queryArticle(articleId, req, res){
-  var counter = 0;
-  var articleInfor = {};
-  var selectArticle = 'select article_id,comment,content,star,timer,title,type,id,starJSON from article where(article_id=?)';
-  var selectAuthor = 'select id,name,image from user where(id=?)';
-  var selectComments = 'select *from comments where(article_id=?) order by timer desc';
+function queryArticle(articleId, res){
 
-  client.query(selectArticle, [articleId], getArticle);
-  client.query(selectComments,[articleId], getComments);
+  let articleInfor = {};
+  let selectArticle = 'select article_id,comment,content,star,timer,title,type,id,starJSON from article where(article_id=?)';
 
-  function getAuthor(err, results) {
-    if(err){
-      return res.send({flag: false, reason: err.message});
-    }
-    articleInfor.author = results[0];
-    submit();
-  }
-
-  function getArticle(err, results) {
-    if(err){
-      return res.send({flag: false, reason: err.message});
-    }else if(results.length == 0) {
+  selectData(selectArticle, [articleId]).then((results) => {
+    if(results.length == 0) {
       return res.send({flag: false, reason: 'article doesn\'t exist!'});
-    }
-    client.query(selectAuthor, [results[0].id], getAuthor);
-    articleInfor.articleContent = results[0];
-    submit();
-  }
+    }else {
+      let selectAuthor = 'select id,name,image from user where(id=?)';
+      let selectComments = 'select *from comments where(article_id=?) order by timer desc';
 
-  function getComments(err, results) {
-    if(err){
-      return res.send({flag: false, reason: err.message}); 
-    }
-    articleInfor.comments = results;
-    submit();
-  }
+      Promise.all([selectData(selectAuthor, [results[0].id]), selectData(selectComments, [articleId])])
+        .then((results) => {
+          articleInfor.author = results[0][0];
+          articleInfor.comments = results[1];
+          getAuthorInfo(articleInfor, res);
+        }).catch((err) => {
+          console.log('Query err:', err.message);
+          res.send({flag: false, reason: 'Server Error.'});
+        });
 
-  function submit() {
-    counter ++;
-    if(counter == 3) {
-      if(articleInfor.articleContent || articleInfor.comments.length){
-        getAuthorInfo(articleInfor, res);
-      }else{
-        res.send({flag: false, reason: 'this article does not exist'});
-      }
+      articleInfor.articleContent = results[0];
     }
-  }
+  });
+
 }
 
 function getAuthorInfo(articleInfor, res) {
-  var counter = 0;
-  var id = articleInfor.author.id;
+
+  var arrOfId = [articleInfor.author.id];
   var selectAllStar = 'select star from stars where(id=?)';
   var selectAllBeStar = 'select star from article where(id=?)';
   var selectArticleNum = 'select star from article where(id=?)';
-  
-  client.query(selectAllStar, [id], getAllStar);
-  client.query(selectAllBeStar, [id], getAllBeStar);
-  client.query(selectArticleNum, [id], getArticleNum);
 
-  function getAllStar(err, results) {
-    if(err){
-      return res.send({flag:false, reason: err.message});
-    }
-    articleInfor.author.starNum = results.length;
-    send();
-  }
-
-  function getAllBeStar(err, results) {
-    if(err) {
-      return res.send({flag: false, reason: err.message});
-    }
-    var num = 0;
-    results.forEach(function(val) {
-      num += parseInt(val.star);
-    });
-    articleInfor.author.beStarNum = num;
-    send();
-  }
-
-  function getArticleNum(err, results) {
-    if(err){
-      return res.send({flag: false, reason: err.message});
-    }
-    articleInfor.author.articleNum = results.length;
-    send();
-  }
-
-  function send() {
-    counter ++;
-    if(counter == 3) {
+  Promise.all([selectData(selectAllStar, arrOfId), selectData(selectAllBeStar, arrOfId), selectData(selectArticleNum, arrOfId)])
+    .then((results) => {
+      let sum = 0;
+      results[1].forEach(function(val) {
+        sum += parseInt(val.star);
+      });
+      articleInfor.author.beStarNum = sum;
+      articleInfor.author.starNum = results[0].length;
+      articleInfor.author.articleNum = results[2].length;
       res.send({flag: true, articleInfor: articleInfor});
-    }
-  }
+    }).catch((err) => {
+      console.log('query err:', err.message);
+      return res.send({flag: false, reason: 'Server Error.'});
+    });
+
+}
+
+function selectData(SQL, arr) {
+  return new Promise((resolve, reject) => {
+    client.query(SQL, arr, (err, results) => {
+      if(err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
 }

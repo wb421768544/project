@@ -1,12 +1,14 @@
 <template>
   <div>
     <img :src="getApi(getUser.image)" id="portrait" :title="getUser.name" @click="show = !show">
-    <ul class="list" v-show="show">
-      <li><router-link to="/user">我的博客</router-link></li>
-      <li><router-link to="/star">收藏</router-link></li>
-      <li><router-link to="">账号设置</router-link></li>
-      <li><a @click="logout">退出登录</a></li>
-    </ul>
+    <transition name="toggle">
+      <ul class="list" v-show="show">
+        <li @click="agent()"><a>我的博客</a></li>
+        <li @click="agent('stars')"><a>收藏</a></li>
+        <li @click="agent('information')"><a>账号设置</a></li>
+        <li><a @click="logout">退出登录</a></li>
+      </ul>
+    </transition>
   </div>
 </template>
 
@@ -19,6 +21,11 @@ export default {
     };
   },
   methods: {
+    agent(parameter = '') {
+      let path = `/user/${this.getUser.id}/${parameter}`;
+      this.$router.push(path);
+      this.show = false;
+    },
     logout() {
       document.cookie = "id = ''";
       this.$router.push("/");
@@ -30,6 +37,12 @@ export default {
 </script>
 
 <style scoped>
+.toggle-enter-active, .toggle-leave-active {
+  transition: opacity .5s;
+}
+.toggle-enter, .toggle-leave-to {
+  opacity: 0;
+}
 .list {
   right: 5px;
   font-size: 0.6em;
@@ -49,5 +62,10 @@ export default {
   cursor: pointer;
   border-radius: 2em;
   vertical-align: middle;
+}
+@media only screen and (max-width: 600px) {
+  #portrait {
+    margin: 0;
+  }
 }
 </style>

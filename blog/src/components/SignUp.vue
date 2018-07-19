@@ -17,46 +17,25 @@
 
 <script>
 import { mapGetters } from "vuex";
+class Information{
+  constructor(name, placeholder, key, type = 'text') {
+    this.name = name;
+    this.type = type;
+    this.placeholder = placeholder;
+    this.reason = '';
+    this.key = key;
+  }
+}
 export default {
   name: "SignUp",
   data() {
     return {
       info: [
-        {
-          name: "用户名",
-          type: "text",
-          placeholder: "choose your user name",
-          reason: "",
-          key: "id"
-        },
-        {
-          name: "昵称",
-          type: "text",
-          placeholder: "enter your nickname",
-          reason: "",
-          key: "name"
-        },
-        {
-          name: "密码",
-          type: "password",
-          placeholder: "enter your password",
-          reason: "",
-          key: "password"
-        },
-        {
-          name: "电话号码",
-          type: "text",
-          placeholder: "enter your phone number",
-          reason: "",
-          key: "phone"
-        },
-        {
-          name: "邮箱",
-          type: "email",
-          placeholder: "enter your email",
-          reason: "",
-          key: "eMail"
-        }
+        new Information('用户名', 'choose your user name', 'id'),
+        new Information('昵称', 'enter your nickname', 'name'),
+        new Information('密码', 'enter your password', 'password', 'password'),
+        new Information('电话号码', 'enter your phone number', 'phone'),
+        new Information('邮箱', 'enter your email', 'eMail' , 'email')
       ],
       value: ["", "", "", "", ""]
     };
@@ -88,24 +67,20 @@ export default {
       this.email();
     },
     user() {
-      var letter = this.value[0].charAt(0),
-        len = this.value[0].length;
-      if (len < 9 || len > 16) {
-        if (len == 0) {
-          this.info[0].reason = "请输入用户名";
-        } else {
-          this.info[0].reason = "用户名长度为9~16";
-        }
-      } else if (letter < "A" || (letter > "z" && letter != "_")) {
-        this.info[0].reason = "首字符必须是字母或下划线";
-      } else {
-        this.info[0].reason = "";
-      }
-      if (this.info[0].reason == "" && this.value[0] != "") {
-        //发送ajax，检查id是否已经存在
+      let userName = this.value[0].trim();
+      if(userName == '') {
+        this.info[0].reason = '请输入用户名';
+      }else if(!/^.{6,16}$/.test(userName)) {
+        this.info[0].reason = '用户名长度必须为6~16';
+      }else if(!/(?=.*[_0-9a-z])^[_0-9a-z]{6,16}$/.test(userName)) {
+        this.info[0].reason = '用户名只能含有小写字母、数字和下划线';
+      }else if(/^(?=[\d]{1})/.test(userName)) {
+        this.info[0].reason = '用户名不能以数字开头';
+      }else{
+        this.info[0].reason = '';
         $.ajax({
           type: "get",
-          url: this.getApi(`signup?action=id&val=${this.value[0]}`),
+          url: this.getApi(`signup?action=id&val=${userName}`),
           success: json => {
             if (!json.flag) {
               this.info[0].reason = "用户名已存在";
@@ -115,13 +90,15 @@ export default {
       }
     },
     nickname() {
-      var nick = this.value[1];
-      if (nick.length == 0) {
-        this.info[1].reason = "请输入昵称";
+      var nick = this.value[1].trim();
+      if (nick == '') {
+        this.info[1].reason = '请输入昵称';
       } else if (nick.length > 16) {
-        this.info[1].reason = "昵称长度不能超过16";
+        this.info[1].reason = '昵称长度不能超过16';
+      } else if(!/^[\S]{1,16}$/.test(nick)) {
+        this.info[1].reason = '昵称不能含有空格';
       } else {
-        this.info[1].reason = "";
+        this.info[1].reason = '';
       }
     },
     password() {
@@ -133,17 +110,20 @@ export default {
       }
     },
     phone() {
-      if (this.value[3].length != 11) {
-        this.info[3].reason = "请输入正确的手机号码";
-      } else {
+      if(/[\d]{11}/.test(this.value[3])) {
         this.info[3].reason = "";
+      }else {
+        this.info[3].reason = "请输入正确的手机号码";
       }
     },
     email() {
-      if (this.value[4] == "") {
+      let email = this.value[4].trim();
+      if (email == '') {
         this.info[4].reason = "请输入邮箱";
-      } else {
-        this.info[4].reason = "";
+      } else if(!/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/.test(email)) {
+        this.info[4].reason = '请输入正确的邮箱';
+      }else {
+        this.info[4].reason = '';
       }
     },
     submit() {

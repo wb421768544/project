@@ -29,7 +29,8 @@ export default {
 
 <style scoped>
 #home {
-  width: 980px;
+  width: 99%;
+  max-width: 980px;
   margin: 70px auto;
   border-radius: 3px;
   position: relative;
@@ -42,4 +43,9 @@ export default {
 }
 .user-bar, .tourist-bar { width: 700px;}
 .side-bar, .user-bar, .tourist-bar { display: inline-block;}
+@media only screen and (max-width: 980px) {
+    .tourist-bar, .user-bar {
+      width: 100%;
+    }
+}
 </style>

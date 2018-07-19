@@ -69,7 +69,7 @@ export default {
 <style scoped>
 form {
     width:500px;
-    margin: 9% auto;
+    margin: 15% auto;
     padding: 30px 0px;
     text-align: center;
     border-radius: 10px;
@@ -127,5 +127,12 @@ form > span{
 form > span + a {
     float: right;
     margin-right: 70px;
+}
+@media only screen and (max-width: 500px)  {
+  form {
+    margin-top: 30%;
+    width: 100%;
+    min-width: 320px;
+  }
 }
 </style>
