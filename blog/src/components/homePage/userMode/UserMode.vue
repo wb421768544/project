@@ -4,7 +4,7 @@
       <img :src="getApi(getUser.image)" />
       <router-link to="/write"><i class="icon-write"></i>写文章</router-link>
       <router-link :to="'/user/' + getUser.id"><i class="icon-personal"></i>个人中心</router-link>
-      <a class="setting">设置</a>
+      <router-link :to="'/user/' + getUser.id + '#setting'" class="setting" @click="setFlag">设置</router-link>
     </div>
     <div class="user-list">
       <ul class="classify">
@@ -30,6 +30,9 @@ export default {
     }
   },
   methods: {
+    setFlag() {
+
+    },
     shift(index) {
       var $target = $(event.target);
       $target = $target.is('a') ? $target.parent() : $target;

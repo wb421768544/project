@@ -5,9 +5,7 @@
         <span class="type">{{people.type}}</span>
         <span class="author">{{people.name || author}}</span>
         <span class="time">{{new Date(parseInt(people.timer)).toLocaleString()}}</span>
-        <p class="title">
-          {{people.title}}
-        </p>
+        <p class="title">{{people.title}}</p>
         <button>
           <span class="icon icon-color" :class="{'have-star': (people.status || index == 1)}" title="收藏" @click.stop="toggleColor(cur, index)">
             <i class="icon-star"></i>
@@ -19,7 +17,12 @@
           </span>
         </button>
       </div>   <!-- .article -->
-    </div>  <!-- show[index] --> 
+      <div v-if="arr[index].length == 0" class="empty">
+        <p v-show="index == 0" class="empty-text">{{$parent.person}}还没有发表过任何文章。。。</p>
+        <p v-show="index == 1" class="empty-text">{{$parent.person}}还没有收藏任何文章。。。</p>
+        <img src="@/assets/empty-box.svg" />
+      </div>
+    </div>  <!-- show[index] -->
   </div>
 </template>
 
@@ -30,6 +33,9 @@ export default {
       this.$router.push('/article/' + article_id);
     },
     toggleColor(cur, index) {
+      if(!this.$store.getters.isLogin) {
+        return alert('请登录');
+      }
       var num = 0, $target = $(event.target);
       $target = $target.is('i') ? $($target[0].parentElement) : $target;
       if($target.is('.have-star')) {
@@ -40,8 +46,7 @@ export default {
         num = 1;
       }
       this.arr[index][cur].star = parseInt(this.arr[index][cur].star) + num;
-      var name = index == 0 ? this.author : this.arr[index][cur].name;
-      var requerURL = this.$store.getters.getApi(`api?require=updatestar&num=${num}&article_id=${this.arr[index][cur].article_id}&name=${name}`);
+      var requerURL = this.$store.getters.getApi(`api?require=updatestar&num=${num}&article_id=${this.arr[index][cur].article_id}&name=${this.$store.getters.getUser.name}`);
       $.ajax({
         url: requerURL,
         xhrFields:{withCredentials:true},
@@ -58,6 +63,15 @@ export default {
 </script>
 
 <style scoped>
+.empty {
+  padding: 30px;
+  text-align: center;
+  background-color: white;
+}
+.empty-text {
+  color: #707070;
+  font-size: 2em;
+}
 .icon-star {
   width: 20px;
   height: 20px;

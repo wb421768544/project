@@ -13,16 +13,14 @@ import TouristMode from './touristMode/TouristMode';
 import { mapGetters } from 'vuex';
 export default {
     name: 'home',
-    data() {
-      return {
-        
-      }
-    },
     computed: mapGetters(['isLogin']),
     components: {
       userMode: UserMode,
       sideBar: SideBar,
       touristMode: TouristMode
+    },
+    mounted() {
+      this.$store.commit('setTitle', 'Blog');
     }
 }
 </script>

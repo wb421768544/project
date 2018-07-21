@@ -59,6 +59,7 @@ export default {
         this.authorInfor = article.author;
         this.authorInfor.image = this.getApi(this.authorInfor.image);
         this.value = this.article.content;
+        this.$store.commit('setTitle', article.articleContent.title);
       }else{
         alert(json.reason);
         this.$router.replace('/');

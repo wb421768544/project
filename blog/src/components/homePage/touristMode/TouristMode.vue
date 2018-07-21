@@ -33,15 +33,16 @@ export default {
       var options = ['推荐', ...this.getArticleTypeList];
       $.ajax({
         type: 'get',
-        url: this.getApi(`getarticlelist?action=type&start=0&order=${options[num]}`),
-        success: (json) => {
+        url: this.getApi(`getarticlelist?action=type&start=0&order=${options[num]}`)
+      }).then(json => {
           if(json.flag) {
             this.$store.commit('setArticleTypeList', json.articleType);
             this.articleList = json.articleList;
           }else{
-            console.error(json.reason);
+           throw new Error(json.reason);
           }
-        }
+      }).catch(err => {
+        console.error(err);
       });
     }
   },

@@ -6,10 +6,10 @@
         <img src="../../assets/wb.jpg" id="wb">
       </router-link>
       <router-link to="/" class="home">首页</router-link>
-      <form>
-        <input type="text" placeholder="搜索文章">
-        <img src="@/assets/search.svg" />
-      </form>
+      <div class="form">
+        <input id="query" type="text" placeholder="搜索文章" @keydown.enter="query">
+        <img src="@/assets/search.svg" @click="query" />
+      </div>
       <ul class="right">
         <li v-if="flag">
           <router-link to="/write">
@@ -45,6 +45,11 @@ export default {
     };
   },
   methods: {
+    query() {
+      if($('#query').val().trim() != '') {
+        this.$router.push('/search?query=' + $('#query').val());
+      }
+    },
     logout() {
       document.cookie = "id = ''";
       this.$router.push("/");
@@ -100,16 +105,20 @@ export default {
   transform: translateY(0%);
   transition: transform 0.2s;
 }
-form.focus { border: 1px solid #007fff;}
-form {
+.form {
+  position: relative;
   display: inline-block; 
-  border: 1px solid #e6e6e7;
+  z-index: 30;
   background-color: #fafafb;
 }
-form img {
+input:focus { outline: 1px solid #007fff!important;}
+.form img {
+  right: 0;
+  top: 50%;
   margin: 0;
   padding: 0 8px;
-  vertical-align: middle;
+  position: absolute;
+  transform: translate(0, -50%);
 }
 input {
   border: none;
@@ -118,7 +127,9 @@ input {
   font-size: 0.85em;
   padding-left: 10px;
   border-radius: 2px;
+  padding-right: 50px;
   vertical-align: middle;
+  border: 1px solid #e6e6e7;
   background-color: transparent;
 }
 .top-bar-container {
@@ -131,7 +142,7 @@ input {
 }
 .top-bar {
   margin: 0 auto;
-  min-width: 400px;
+  min-width: 370px;
   max-width: 1000px;
   font-size: 1.5em;
   color: #007fff;
@@ -152,7 +163,7 @@ input {
   transform: translate(0, -50%);
 }
 .right > li {
-  margin: 0 10px;
+  margin-right: 20px;
   display: inline-block;
 }
 .right a {
@@ -172,9 +183,18 @@ input {
   transition: background 0.2s;
 }
 .btn-write-blog:hover { background-color: #0371df;}
-@media only screen and (max-width: 600px) {
-   .write-icon, .home {
+@media only screen and (max-width: 500px) {
+   .btn-write-blog, .home {
     display: none;
+  }
+  #wb {
+    height: 30px;
+  }
+  .right li:first-child {
+    margin: 0 ;
+  }
+  .write-icon {
+    height: 2em;
   }
 }
 </style>

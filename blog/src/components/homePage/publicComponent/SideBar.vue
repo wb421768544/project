@@ -21,6 +21,10 @@ export default {
 </script>
 
 <style scoped>
+a {
+  padding:  8px 40px;
+  display: inline-block;
+}
 .label span:hover {
   color: white;
   background-color: #00cc00;
@@ -57,7 +61,6 @@ export default {
 .side-top-bar button {
   margin: auto;
   display: block;
-  padding: 8px 40px;
   border-radius: 3px;
   background-color: #007fff;
   transition: background 0.2s;

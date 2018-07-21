@@ -1,20 +1,10 @@
 /*jshint esversion: 6 */
-var mysql = require('mysql');
-var express = require('express');
-var router = express.Router();
-
-var options = {
-  host: "localhost",
-  user: "root",
-  password: "3.3.0.",
-  database: "mydatabase",
-  useConnectionPooling: true
-};
-var client = mysql.createConnection(options);
+const express = require('express');
+const router = express.Router();
+const updateSQL = require('./methods');
 
 router.post('/', function (req, res) {
   if (req.body.check) {
-    //Check whether id is unique
     checkId(req, res);
   } else if (req.body.login) {
     login(req, res);
@@ -22,53 +12,36 @@ router.post('/', function (req, res) {
 });
 
 router.get('/', function (req, res) {
-  //keep the conversation
   var session = req.session.users[req.signedCookies.id];
   if (session) {
     getUserData(session.id, res);
   } else {
-    res.send({
-      status: "error",
-      reason: "未登录"
-    });
-    return ;
+    return res.send({status: "error", reason: "未登录"});
   }
   if (session.cookie.maxAge >= Date.now()) {
     session.cookie.maxAge = Date.now() + 1000 * 60 * 60;
   } else {
     delete req.session.users[req.signedCookies.id];
     delete req.session.id[req.body.id];
-    res.send({
-      status: "error",
-      reason: "超时，请重新登录！"
-    });
-    return;
+    return res.send({ status: "error", reason: "超时，请重新登录！" });
   }
 });
-
 
 module.exports = router;
 
 
 function checkId(req, res) {
   var selectUseId = "select *from user where(id=?)";
-  client.query(selectUseId, [req.body.id], getUserId);
-
-  function getUserId(err, results) {
+  updateSQL(selectUseId, [req.body.id], (err, results) => {
     if (err) {
+      res.header(500);
       return console.log('Query user id err:', err.message);
     } else if (results.length) {
-      res.send({
-        flag: false,
-        reason: "This id already exists!"
-      });
+      res.send({ flag: false, reason: "This id already exists!" });
     } else {
-      res.send({
-        flag: true,
-        reason: "success!"
-      });
+      res.send({ flag: true,reason: "success!" });
     }
-  }
+  });
 }
 
 function login(req, res) {
@@ -79,32 +52,22 @@ function login(req, res) {
     delete req.session.id[req.body.id];
   }
   var selectUserData = "select *from user where(id=?)";
-  client.query(selectUserData, [req.body.id], getUserData);
-
-  function getUserData(err, results) {
-    if (err) {
-      return console.log("Query user err:", err.message);
-    }
+  updateSQL(selectUserData, [req.body.id]).then(results => {
     if (results.length) {
       if (results[0].password == req.body.password) {
         addToSession(req, res);
-        res.send({
-          flag: true,
-          reason: "success!"
-        });
+        res.send({flag: true, reason: "success!"});
       } else {
-        res.send({
-          flag: false,
-          reason: "Your password is error!"
-        });
+        res.send({flag: false, reason: "Your password is error!"});
       }
     } else {
-      res.send({
-        flag: false,
-        reason: "Your user name does not exists!"
-      });
+      res.send({flag: false, reason: "Your user name does not exists!"});
     }
-  }
+  }).catch(err => {
+    res.header(500);
+    console.log("Query user err:", err.message);
+    return res.send({ reason: 'Server Error. Please try it again later.'});
+  });
 }
 
 function addToSession(req, res) {
@@ -128,18 +91,11 @@ function addToSession(req, res) {
 
 function getUserData(id, res) {
   var selectUserId = "select id,name,image,style,phone,eMail from user where(id=?)";
-  client.query(selectUserId, [id], function (err, results) {
-    if (err) {
-      res.send({
-        flag: false,
-        reason: 'Server Error!'
-      });
-      return console.log('Query user data err:', err.message);
-    } else {
-      res.send({
-        userInformation: results[0],
-        flag: true
-      });
-    }
+  updateSQL(selectUserId, [id]).then(results => {
+    res.send({ userInformation: results[0], flag: true });
+  }).catch(err => {
+    res.header(500);
+    console.log('Query user data err:', err.message);
+    res.send({ flag: false, reason: 'Server Error!' });
   });
 }

@@ -22,7 +22,10 @@ export default {
   },
   methods: {
     agent(parameter = '') {
-      let path = `/user/${this.getUser.id}/${parameter}`;
+      let path = `/user/${this.getUser.id}`;
+      if(parameter != '') {
+        path += `/${parameter}`;
+      }
       this.$router.push(path);
       this.show = false;
     },

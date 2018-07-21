@@ -1,25 +1,27 @@
-var path = require('path');
-var logger = require('morgan');
-var multer = require('multer');
-var express = require('express');
-var favicon = require('serve-favicon');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var cookieParser = require('cookie-parser');
-var objMulter = multer({
+/*jshint esversion: 6 */
+const path = require('path');
+const logger = require('morgan');
+const multer = require('multer');
+const express = require('express');
+const favicon = require('serve-favicon');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const objMulter = multer({
   dest: './public/images/'
 });
 
 //route modules
-var add = require('./routes/add');
-var api = require('./routes/api');
-var login = require('./routes/login');
-var submit = require('./routes/submit');
-var article = require('./routes/article');
-var signUp = require('./routes/signup');
-var getAricleList = require('./routes/getArticleList');
+const add = require('./routes/add');
+const api = require('./routes/api');
+const login = require('./routes/login');
+const search = require('./routes/search');
+const signUp = require('./routes/signup');
+const submit = require('./routes/submit');
+const article = require('./routes/article');
+const getAricleList = require('./routes/getArticleList');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,7 +29,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -50,7 +52,6 @@ app.use(session({
 
 //initialize session.users,and solving cross-domain problems
 app.use(function (req, res, next) {
-  
   res.setHeader('Access-Control-Allow-Origin', `http://${req.hostname}:8888`);
   res.setHeader('Access-Control-Allow-Credentials', true);
   req.session.users = req.session.users || {};
@@ -62,6 +63,7 @@ app.use(function (req, res, next) {
 app.use('/add', add);
 app.use('/api', api);
 app.use('/login', login);
+app.use('/search', search);
 app.use('/submit', submit);
 app.use('/signup', signUp);
 app.use('/article', article);

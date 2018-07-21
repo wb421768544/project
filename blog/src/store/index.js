@@ -6,14 +6,24 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     flag: false,
+    follow: [],
     articleList: [],
-    articleTypeList: [],
+    articleTypeList: ['OS', '前端', '后台', '数据库', '计算机网络'],
+    title: $('title'),
     user: { image: 'image/default.png'},
     api: 'http://' + location.hostname + ':8080/'
   },
   mutations: {
     setArticleTypeList(state, list) {
       state.articleTypeList = list;
+    },
+    setTitle(state, title) {
+      if(state.title.text() != title) {
+        state.title.text(title);
+      }
+    },
+    updateUserFollow(state, follow) {
+      state.user.follow = follow;
     }
   },
   getters: {

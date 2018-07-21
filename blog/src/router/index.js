@@ -7,7 +7,7 @@ import SignUp from '@/components/SignUp';
 import User from '@/components/user/User';
 import NotFound from '@/components/NotFound';
 
-
+import Query from '@/components/article/Query';
 import Article from '@/components/article/Article';
 import Write from '@/components/article/modify/Write';
 import Rewrite from '@/components/article/modify/Rewrite';
@@ -51,6 +51,11 @@ export default new Router({
       path: '/edit/:id',
       name: 'rewrite',
       component: Rewrite
+    },
+    {
+      path: '/search',
+      name: 'Query',
+      component: Query
     },
     {
       path: '*',

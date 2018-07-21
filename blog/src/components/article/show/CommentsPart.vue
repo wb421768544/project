@@ -5,7 +5,6 @@
       <div class="comment-part">
         <img v-if="isLogin" :src="getApi(getUser.image)" class="portrait" />
         <img v-else src="../../../assets/tourist.svg" class="portrait" />
-        <span>{{getUser.name}}</span>
         <div id="autoInput" class="auto-input div-auto-input" contenteditable="true" @blur="judge"></div>
         <span class="explain">Ctrl + Enter</span>
         <button class="btn-comment" @click="submit">评论</button>
@@ -133,6 +132,7 @@ export default {
 .img {
   height: 38px;
   width: 38px;
+  margin-right: 10px;
   vertical-align: middle;
   border-radius: 19px;
 }
@@ -141,7 +141,6 @@ export default {
   margin-left: 40px;
   margin-bottom: 18px;
 }
-
 .btn-comment,
 .explain {
   position: absolute;
@@ -187,8 +186,10 @@ export default {
   text-align: left;
   border-radius: 6px;
   padding: 20px 25px;
+  padding-left: 5px;
   border: #f1f1f1 0.5px solid;
   background-color: rgb(248, 249, 250);
+  white-space: nowrap;
 }
 .comment-block > span {
   font-size: 1.8em;
@@ -227,8 +228,12 @@ export default {
   white-space:pre-line;
 }
 .timer {
+  font-size: .8em;
   float: right;
   color: gray;
+}
+#autoInput {
+  margin-bottom: 2em;
 }
 @media only screen and (max-width: 960px ) {
   .comment-block {
@@ -236,6 +241,22 @@ export default {
   }
   .show {
     visibility: visible!important;
+  }
+}
+@media only screen and (max-width: 500px ) {
+  .comment-part {
+    font-size: 0.5em;
+  }
+  .portrait {
+    height: 30px;
+    width: 30px;
+  }
+  .btn-comment {
+    padding: 5px 10px;
+  }
+  .img {
+    height: 25px;
+    width: 25px;
   }
 }
 </style>

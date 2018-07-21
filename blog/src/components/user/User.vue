@@ -3,23 +3,24 @@
     <article class="article">
       <nav class="menu-bar">
         <div>
-          <img :src="getApi(getUser.image)">
-          <span>{{getUser.name}}</span>
-          <button>编辑个人资料</button>
+          <img :src="authorImage">
+          <span>{{authorInfo.name}}</span>
+          <button v-if="isLogin && getUser.id == userId" @click="information">编辑个人资料</button>
+          <button v-else class="focus" :class="{focused: focusedFlag}" @click="focus">关注</button>
         </div>
-        <ul>
-          <li @click="blog">我的博客</li>
-          <li @click="star">我的收藏</li>
-          <li @click="information">我的资料</li>
-          <li @click="relationship">我的关系</li>
+        <ul class="person" :class="{self: getUser.id == userId}">
+          <li @click="blog" class="now">的博客</li>
+          <li @click="star">的收藏</li>
+          <li @click="relationship">的关系</li>
+          <li v-if="isLogin && getUser.id == userId" @click="information">的资料</li>
         </ul>
       </nav>
       <blog-star :arr="[articleInfo, stars]" :author="authorInfo.name" :show="show" />
-      <self-information v-if="show[2]" />
-      <relationship v-if="show[3]" />
+      <relationship v-if="show[2]" />
+      <self-information v-if="show[3]" />
     </article>
     <div class="side-bar">
-      <div class="rs" v-for="(item, index) in [{item: '关注了', number: fansNumber}, {item: '关注者', number: followNumber}]" :key="index">
+      <div class="rs" v-for="(item, index) in [{item: '关注了', number: followNumber}, {item: '关注者', number: fansNumber}]" :key="index">
         <span>{{item.item}}</span><br>
         <span>{{item.number}}</span>
       </div>
@@ -36,26 +37,46 @@ export default {
   name: "user",
   data() {
     return {
-      to: '',
+      userId: '',  //当前用户，任何人可看的
       stars: {},
+      person: '他',
+      focusedFlag: false,
       authorInfo: {},
       articleInfo: {},
+      authorImage: '',
       fansNumber: 0,
       followNumber: 0,
       show: [true, false, false, false],
     };
   },
   methods: {
+    focus() {
+      if(!this.isLogin) {
+        return alert('请登录');
+      }
+      $.ajax({
+        url: this.getApi(`api?require=focus&id=${this.userId}`),
+        xhrFields:{withCredentials:true},
+      }).then(json => {
+        if(json.flag) {
+          this.focusedFlag = !this.focusedFlag;
+        }else {
+          throw new Error(json.reason);
+        }
+      }).catch(err => {
+        console.error(err);
+      })
+    },
     blog() {
       if (!this.show[0]) {
-        this.requestPersonBlogInformation();
+        this.requestPersonBlogInformation(this.userId);
         this.updateView(1);
       }
     },
     star() {
       if (!this.show[1]) {
         $.ajax({
-          url: this.getApi('api?require=stars'),
+          url: this.getApi(`api?require=stars&id=${this.userId}`),
           success: this.getStar,
           xhrFields: { withCredentials: true }
         });
@@ -63,13 +84,13 @@ export default {
       }
     },
     information() {
-      if (!this.show[2]) {
-        this.updateView(3);
+      if (!this.show[3]) {
+        this.updateView(4);
       }
     },
     relationship() {
-      if (!this.show[3]) {
-        this.updateView(4);
+      if (!this.show[2]) {
+        this.updateView(3);
       }
     },
     getData(json) {
@@ -81,7 +102,9 @@ export default {
       this.articleInfo = json.article;
       this.fansNumber = this.authorInfo.fans.length;
       this.followNumber = this.authorInfo.follow.length;
-      this.authorInfo.image = this.getApi(this.authorInfo.image);
+      this.focusedFlag = this.authorInfo.fans.indexOf(this.getUser.id) != -1;
+      this.authorImage = this.getApi(this.authorInfo.image);
+      this.$store.commit('setTitle', this.authorInfo.name);
       this.updateStar();
     },
     getStar(json) {
@@ -89,7 +112,10 @@ export default {
       this.updateStar();
     },
     updateStar() {   //stars和articleInfo中article_id相同则表示自己star了自己的文章，做标记
-      var article = this.articleInfo,
+      if(!this.isLogin || this.getUser.id != this.userId) {
+        return ;
+      }
+      let article = this.articleInfo,
         stars = this.stars;
       for (let i = 0, len = article.length; i < len; i++) {
         for (let j = 0, l = stars.length; j < l; j++) {
@@ -101,23 +127,23 @@ export default {
     },
     updateView(index) {
       $(`.menu-bar li:nth-child(${index})`)
-        .css("color", "#007fff")
+        .addClass('now')
         .siblings()
-        .css("color", "black");
+        .removeClass('now');
       this.show = [false, false, false, false];
       this.show[index - 1] = true;
     },
-    requestPersonBlogInformation() {
+    requestPersonBlogInformation(userId) {
       let personalPromise = new Promise((resolve, reject) => {
         $.ajax({
-          url: this.getApi('api?require=personal'),
+          url: this.getApi(`api?require=personal&id=${userId}`),
           success: resolve,
           xhrFields: { withCredentials: true }
         });
       });
       let starPromise = new Promise((resolve, reject) => {
         $.ajax({
-          url: this.getApi('api?require=stars'),
+          url: this.getApi(`api?require=stars&id=${userId}`),
           success: resolve,
           xhrFields: { withCredentials: true }
         });
@@ -139,11 +165,13 @@ export default {
       return [obj, index];
     }
   },
-  computed: mapGetters(['getUser', 'getApi']),
+  computed: mapGetters(['getUser', 'getApi', 'isLogin']),
   mounted() {
-    this.requestPersonBlogInformation();
-    let arr = this.jumpToPath();
-    this.to = this.$route.path.substring(0, arr[0].index);
+    this.requestPersonBlogInformation(this.userId = this.$route.path.match(/user\/([\w]{6,16})\/?/)[1]);
+    if(this.$route.hash == '#setting') {
+      this.information();
+      this.updateView(4);
+    }
   },
   components: {
     blogStar: BlogStar,
@@ -157,6 +185,27 @@ export default {
 </script>
 
 <style scoped>
+.now {
+  color: #007fff;
+}
+.person li::before {
+  content: '他';
+}
+.self li::before {
+  content: '我';
+}
+.focused::before {
+  content: '已';
+}
+.focus {
+    color: white!important;
+    font-size: 1.5em!important;
+    padding: 13px 35px!important;
+    border-radius: 5px;
+    background-color: #92c452;
+}
+.focus:hover { background-color: #a7cf74;}
+.focus:active { background-color: #92c452;}
 button {
   user-select: none;
   background-color: transparent;
@@ -176,11 +225,12 @@ button {
   margin: 20px;
   font-size: 1.5em;
   font-weight: bold;
+  vertical-align: top;
   display: inline-block;
 }
 .menu-bar button {
   right: 5%;
-  bottom: 20%;
+  bottom: 18%;
   border: 1px solid;
   padding: 10px 20px;
   border-radius: 5px;
@@ -204,7 +254,6 @@ ul li {
 .menu-bar > div {
   box-sizing: border-box;
 }
-.menu-bar li:first-child,
 .menu-bar button {
   color: #007fff;
 }
@@ -255,7 +304,7 @@ ul li {
     display: none;
   }
   #container, .article {
-    width: 100%;
+    width: 98%;
   }
 }
 </style>

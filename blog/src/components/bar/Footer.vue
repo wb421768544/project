@@ -1,5 +1,5 @@
 <template>
-  <div>©2018 WB</div>
+  <div class="footer-bar">©2018 WB</div>
 </template>
 
 

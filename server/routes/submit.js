@@ -1,18 +1,10 @@
 /*jshint esversion: 6 */
 const fs = require('fs');
 const path = require('path');
-const mysql = require('mysql');
 const express = require('express');
 const router = express.Router();
 
-let options = {
-  host: 'localhost',
-  user: 'root',
-  password: '3.3.0.',
-  database: 'mydatabase',
-  useConnectionPooling: true
-};
-const client = mysql.createConnection(options);
+const updateSQL = require('./methods');
 
 router.use('/', function (req, res) {
   let option = req.query.action;
@@ -54,8 +46,9 @@ function updateImage(id, req, res) {
     let newName = req.query.temp ? temp : img;
     fs.rename(file.path, newName, err => {
       if (err) {
+        res.header(500);
         console.log('upload file err:', err.message);
-        res.send({flag: false, reason: '上传失败!'});
+        res.send({ reason: '上传失败!'});
       } else {
         res.send({flag: true, reason: '上传成功!', src: newName.substring(9)});
       }
@@ -74,13 +67,14 @@ function removeComment(id, req, res) {
     updateSQL(deleteComment, [article_id, req.query.timer, id]),
     updateSQL(selectComment, [article_id])
   ]).then((results) => {
-    data.len = results.length;
+    data.len = results[1].length;
     return updateSQL('select commentJSON from article where(article_id=?)', [article_id]);
   }).then((results) => {
-    data.commentJSON = results[0].commentJSON;
+    data.commentJSON = JSON.parse(results[0].commentJSON);
     let updateArr = [];
     let updateArticle = 'update article set comment=? where(article_id=?)';
     let updateStarsComment = 'update stars set comment=? where(article_id=?)';
+
     if (data.len == 0) {
       updateArticle = 'update article set comment=?, commentJSON=? where(article_id=?)';
       data.commentJSON = JSON.parse(data.commentJSON);
@@ -96,12 +90,14 @@ function removeComment(id, req, res) {
     ]).then(() => {
       res.send({ flag: true });
     }).catch(err => {
+      res.header(500);
       console.log('update err:', err.message);
-      return res.send({ flag: false, reason: err.message });
+      res.send({ reason: err.message });
     });
   }).catch(err => {
+    res.header(500);
     console.log('update err:', err.message);
-    return res.send({ flag: false, reason: err.message });
+    return res.send({ reason: err.message });
   });
 }
 
@@ -155,21 +151,8 @@ function updateName(id, req, res) {
       reason: 'success~'
     });
   }).catch(err => {
-    res.send({
-      flag: false,
-      reason: err.message
-    });
-  });
-}
-
-function updateSQL(SQL, arr) {
-  return new Promise((resolve, reject) => {
-    client.query(SQL, arr, (err, results) => {
-      if(err) {
-        reject(err);
-      } else {
-        resolve(results);
-      }
-    });
+    res.header(500);
+    console.log('err:', err.message);
+    res.send({ reason: err.message });
   });
 }

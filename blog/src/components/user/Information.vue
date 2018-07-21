@@ -94,10 +94,7 @@ export default {
       });
     }
   },
-  computed: mapGetters(['getApi', 'getUser']),
-  mounted() {
-    // this.bindClickEventToIconPenClass();
-  }
+  computed: mapGetters(['getApi', 'getUser'])
 };
 </script>
 
@@ -218,11 +215,12 @@ p {
   width: 4em;
   border-radius: 2em;
   vertical-align: bottom;
-  margin-left: 60px;
+  margin-left: 80px;
 }
 @media only screen and (max-width: 600px) {
   input {
     margin-left: 30px;
+    width: 9em;
   }
   p {
     padding: 20px 50px;

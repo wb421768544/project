@@ -57,7 +57,7 @@ body {
 }
 html {
   height: 100%;
-  min-width: 400px;
+  min-width: 350px;
   overflow-y: scroll;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
