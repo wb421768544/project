@@ -1,2 +1,2 @@
-# project
-Vue based blogs
+# 一个基于Vue的中文社区
+
