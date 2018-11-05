@@ -33,14 +33,14 @@ export default {
   },
   props: ["comments"],
   methods: {
-    isSelfComment() {
+    isSelfComment(event) {
       $('.show', $(event.target)).css('visibility', 'visible');
     },
-    hiddenIcon() {
+    hiddenIcon(event) {
       $('.show', $(event.target)).css('visibility', 'hidden');
     },
     judge() {
-      if ($("#autoInput")[0].innerHTML == "") {
+      if(!$("#autoInput")[0].innerHTML) {
         this.flag = true;
       }
     },

@@ -97,6 +97,9 @@ export default {
 
 
 <style scoped>
+ul {
+  margin: 0;
+}
 .show-enter, .show-leave-to {
   transform: translateY(-100%);
   transition: transform 0.2s;

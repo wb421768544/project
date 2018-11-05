@@ -2,7 +2,7 @@ function isLogin(req, res) {
   var session = req.session.users[req.signedCookies.id];
   var id = req.signedCookies.id;
 
-  if (session && session.cookie.maxAge >= Date.now()) {
+  if (session && session.cookie.maxAge >= Date.now() && session.userAgent === req.headers['user-agent']) {
     session.cookie.maxAge = Date.now() + 1000 * 60 * 60;
     return true;
   } else {

@@ -52,10 +52,10 @@ app.use(session({
 
 //initialize session.users,and solving cross-domain problems
 app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', `http://${req.hostname}:8888`);
+  res.setHeader('Access-Control-Allow-Origin', req.headers['origin']);
   res.setHeader('Access-Control-Allow-Credentials', true);
   req.session.users = req.session.users || {};
-  req.session.id = {};
+  req.session.id = req.session.id || {};
   next();
 });
 

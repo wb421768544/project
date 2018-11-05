@@ -159,13 +159,15 @@ export default {
   },
   computed: mapGetters(["getApi"]),
   mounted() {
-    $("body").css(
-      "background-image",
-      "url(http://www.huoming.com/d/file/banquan/ruanzhu/2017-10-24/9ff6612eedbe78eb54a465d604ec8ca2.jpg)"
-    );
+    document.querySelector('body').style.backgroundImage = 'url(http://www.huoming.com/d/file/banquan/ruanzhu/2017-10-24/9ff6612eedbe78eb54a465d604ec8ca2.jpg)'
+    // $("body").css(
+    //   "background-image",
+    //   "url(http://www.huoming.com/d/file/banquan/ruanzhu/2017-10-24/9ff6612eedbe78eb54a465d604ec8ca2.jpg)"
+    // );
   },
   destroyed() {
-    $("body").css("background-image", "url()");
+    document.querySelector('body').style.backgroundImage = '';
+    // $("body").css("background-image", "url()");
   }
 };
 </script>

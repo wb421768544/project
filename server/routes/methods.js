@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+
 let options = { //Option of SQL
   host: 'localhost',
   user: 'root',
@@ -13,12 +14,11 @@ function updateSQL(SQL, arr, callback) {
     client.query(SQL, arr, (err, results) => {
       if(callback) {
         return callback(err, results);
-      }else {
-        if(err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
+      }
+      if(err) {
+        reject(err);
+      } else {
+        resolve(results);
       }
     });
   });
