@@ -3,13 +3,17 @@
     <top-bar></top-bar>
     <router-view></router-view>
     <footer-bar></footer-bar>
-  </div> <!-- div#app -->
+    <BackTop />
+  </div>
 </template>
 
 <script>
 import $ from "jquery";
 import TopBar from "./components/bar/TopBar";
 import FooterBar from "./components/bar/Footer";
+
+import BackTop from '@/components/back-top.vue';
+
 $("html").click(() => {
   var $target = $(event.target);
   if (
@@ -25,6 +29,7 @@ $.fn.isChildAndSelfOf = function(b) {
 export default {
   name: "App",
   components: {
+    BackTop,
     "top-bar": TopBar,
     "footer-bar": FooterBar
   }

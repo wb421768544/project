@@ -26,8 +26,8 @@
           <li v-else>
             <portrait-part></portrait-part>
           </li>
-      </ul>       <!-- ul.right -->
-    </div>      <!--top-bar -->
+      </ul>
+    </div>
   </div> 
   </transition>
 </template>
@@ -136,10 +136,11 @@ input {
   background-color: transparent;
 }
 .top-bar-container {
-  top: 0;
-  z-index: 5;
-  width: 100%;
   position: fixed;
+  top: 0;
+  z-index: 2000;
+  width: 100%;
+  will-change: transform;
   background-color: white;
   box-shadow: 0 0 5px rgba(128, 128, 128, 0.293);
 }
@@ -187,7 +188,7 @@ input {
 }
 .btn-write-blog:hover { background-color: #0371df;}
 @media only screen and (max-width: 500px) {
-   .btn-write-blog, .home {
+  .btn-write-blog, .home {
     display: none;
   }
   #wb {

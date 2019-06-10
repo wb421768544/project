@@ -14,9 +14,6 @@ router.use('/', function (req, res) {
       case 'image':
         updateImage(session.id, req, res);
         break;
-        // case 'password': ;break;
-        //case 'phone': ;break;
-        // case 'email': ;break;
       case 'comment':
         updateComments(session.id, req, res);
         break;

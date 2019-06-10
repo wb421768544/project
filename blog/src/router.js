@@ -8,7 +8,9 @@ import User from '@/components/user/User';
 import NotFound from '@/components/NotFound';
 
 import Query from '@/components/article/Query';
-import Article from '@/components/article/Article';
+
+import ArticleCard from '@/article';
+
 import Write from '@/components/article/modify/Write';
 import Rewrite from '@/components/article/modify/Rewrite';
 
@@ -40,7 +42,7 @@ export default new Router({
     {
       path: '/article/:id',
       name: 'article',
-      component: Article
+      component: ArticleCard
     },
     {
       path: '/write',

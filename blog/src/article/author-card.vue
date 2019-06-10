@@ -8,50 +8,48 @@
       </div>
     </div>
     <div class="author-info">
-      <img src="../../../assets/be-star.svg" class="icon">
+      <img src="../assets/be-star.svg" class="icon">
       <span>被收藏{{author.beStarNum}}次</span>
     </div>
     <div class="author-info">
-      <img src="../../../assets/star.svg" class="icon">
+      <img src="../assets/star.svg" class="icon">
       <span>收藏文章{{author.starNum}}篇</span>
     </div>
     <div class="author-info">
-      <img src="../../../assets/article.svg" class="icon">
+      <img src="../assets/article.svg" class="icon">
       <span>发表文章{{author.articleNum}}篇</span>
     </div>
   </div>
 </template>
 
 <script>
-import scroll from '../../../methods/scroll'
 export default {
   props: ['article', 'author'],
-  mounted() {
-    scroll($('.author-block')[0]);
-  }
 }
 </script>
 
 <style scopd>
 .author-block {
-  position: absolute;
-  background-color: white;
-  display: inline-block;
-  vertical-align: top;
-  width: 220px;
-  box-sizing: border-box;
+  position: sticky;
+  top: 90px;
   margin-left: 16px;
   padding: 12px;
+  width: 220px;
+  height: fit-content;
+  box-sizing: border-box;
+
+  vertical-align: top;
   white-space: nowrap;
+  background-color: white;
+}
+.author-block .author {
+  padding: 1.3em;
+  font-size: 1.3em;
 }
 .block-title {
   padding: 1em;
   font-size: 1.3em;
   border-bottom: 1px solid #f5f5f5;
-}
-.author-block .author {
-  padding: 1.3em;
-  font-size: 1.3em;
 }
 .icon {
   height: 1.5em;

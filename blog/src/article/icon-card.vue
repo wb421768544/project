@@ -19,7 +19,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import scroll from '../../../methods/scroll';
 export default {
   data() {
     return {
@@ -59,7 +58,6 @@ export default {
   },
   computed: mapGetters(['getUser', 'getApi', 'isLogin']),
   mounted() {
-    scroll($('.side-icon')[0]);
     getFlag(this);
   }
 }
@@ -91,10 +89,12 @@ function getFlag(self){
   vertical-align: center;
 }
 .side-icon {
+  position: sticky;
+  top: 100px;
+  margin-right: 2em;
+  margin-top: 300px;
+  height: fit-content;
   font-size: 1.8em;
-  position: absolute;
-  top: 150px;
-  left: -80px;
   user-select: none;
 }
 .side-icon > div {
@@ -117,16 +117,16 @@ function getFlag(self){
   border-radius: 1em;
   font-size: 0.5em;
 }
-.icon-star {background-image: url(../../../assets/star-before.svg);}
+.icon-star {background-image: url(../assets/star-before.svg);}
 .icon-comment {
-  background-image: url(../../../assets/comment-before.svg);
+  background-image: url(../assets/comment-before.svg);
   background-size: 80% 80%;
 }
-.icon-qq {background-image: url(../../../assets/share-qq.svg);}
-.icon-wechat {background-image: url(../../../assets/share-wechat.svg);}
+.icon-qq {background-image: url(../assets/share-qq.svg);}
+.icon-wechat {background-image: url(../assets/share-wechat.svg);}
 
-.icon-star:hover, .icon-star-after {background-image: url(../../../assets/star-after.svg);}
-.icon-comment:hover {background-image: url(../../../assets/comment-after.svg);}
-.icon-qq:hover {background-image: url(../../../assets/share-qq-hover.svg);}
-.icon-wechat:hover {background-image: url(../../../assets/share-wechat-hover.svg);}
+.icon-star:hover, .icon-star-after {background-image: url(../assets/star-after.svg);}
+.icon-comment:hover {background-image: url(../assets/comment-after.svg);}
+.icon-qq:hover {background-image: url(../assets/share-qq-hover.svg);}
+.icon-wechat:hover {background-image: url(../assets/share-wechat-hover.svg);}
 </style>

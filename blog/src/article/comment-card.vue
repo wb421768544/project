@@ -1,43 +1,49 @@
 <template>
-  <div>
-    <div class="comment-block">
-      <span>评论</span>
-      <div class="comment-part">
-        <img v-if="isLogin" :src="getApi(getUser.image)" class="portrait" />
-        <img v-else src="../../../assets/tourist.svg" class="portrait" />
-        <div id="autoInput" class="auto-input div-auto-input" contenteditable="true" @blur="judge"></div>
-        <span class="explain">Ctrl + Enter</span>
-        <button class="btn-comment" @click="submit">评论</button>
-      </div>
-      <p v-if="comments.length == 0">还没有人评论。。。 快来抢沙发~</p>
-      <div v-for="(item, index) in comments" :key="index" class="comments" @mouseenter="isSelfComment" @mouseleave="hiddenIcon">
-        <img :src="getApi(item.image)" class="img">
-        <span class="name">{{item.name}}</span>
-        <span class="timer">{{new Date(parseInt(item.timer)).toLocaleString()}}</span>
-        <p class="comment-content">{{item.content}}</p>
-        <!-- <i class="praise" @click="点赞"></i> -->
-        <i class="delete" @click="delComment(item.timer, item.article_id, index)" :class="[{'show': item.id == getUser.id}]"></i>
-      </div>
+  <div class="comment-block">
+    <span>评论</span>
+    <div class="comment-part">
+      <img v-if="isLogin" :src="getApi(getUser.image)" class="portrait" />
+      <img v-else src="../assets/tourist.svg" class="portrait" />
+      <div id="autoInput" class="auto-input div-auto-input" contenteditable="true" @blur="judge"></div>
+      <button @click="submit">评论</button>
+    </div>
+    <p v-if="comments.length == 0">还没有人评论。。。 快来抢沙发~</p>
+    <div
+      class="comments"
+      v-for="(item, index) in comments"
+      :key="index"
+    >
+      <img :src="getApi(item.image)" class="img">
+      <span class="name">{{item.name}}</span>
+      <span class="timer">{{getDate(item.timer)}}</span>
+      <p class="comment-content">{{item.content}}</p>
+      <i
+        class="delete"
+        :class="[{'show': item.id == getUser.id}]"
+        @click="delComment(item.timer, item.article_id, index)"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+
+
 export default {
   data() {
     return {
       flag: true,
-      text: "",
+      text: '',
     };
   },
   props: ["comments"],
+  computed: {
+    ...mapGetters(['getApi', 'getUser', 'isLogin']),
+  },
   methods: {
-    isSelfComment(event) {
-      $('.show', $(event.target)).css('visibility', 'visible');
-    },
-    hiddenIcon(event) {
-      $('.show', $(event.target)).css('visibility', 'hidden');
+    getDate(timer) {
+      return new Date(parseInt(timer)).toLocaleString();
     },
     judge() {
       if(!$("#autoInput")[0].innerHTML) {
@@ -92,7 +98,6 @@ export default {
       }
     }
   },
-  computed: mapGetters(['getApi', 'getUser', 'isLogin'])
 };
 </script>
 
@@ -108,17 +113,17 @@ export default {
   cursor: pointer;
 }
 .praise {
-  background-image: url(../../../assets/praise.svg);
+  background-image: url(../assets/praise.svg);
 }
 .delete {
-  background-image: url(../../../assets/delete.svg);
+  background-image: url(../assets/delete.svg);
 }
 .praise-after,
 .praise:hover {
-  background-image: url(../../../assets/praise-after.svg);
+  background-image: url(../assets/praise-after.svg);
 }
 .delete:hover {
-  background-image: url(../../../assets/delete-after.svg);
+  background-image: url(../assets/delete-after.svg);
 }
 .comments {
   font-size: 1.3em;
@@ -128,6 +133,12 @@ export default {
   margin: auto;
   color: black;
   border-bottom: #f1f1f1 0.5px solid;
+}
+.comments:hover .show {
+  visibility: visible;
+}
+.show {
+  visibility: hidden;
 }
 .img {
   height: 38px;
@@ -141,26 +152,18 @@ export default {
   margin-left: 40px;
   margin-bottom: 18px;
 }
-.btn-comment,
-.explain {
+button {
   position: absolute;
   bottom: 10px;
-}
-.btn-comment {
   right: 25px;
+  padding: 8px 20px;
   color: white;
   font-size: 1.6em;
-  padding: 8px 20px;
   border-radius: 2px;
   background-color: #007fff;
   transition: background-color 0.2s;
 }
-.explain {
-  right: 120px;
-  font-size: 2em;
-  line-height: 2em;
-}
-.btn-comment:hover {
+button:hover {
   background-color: #0371df;
 }
 .portrait {
@@ -170,9 +173,8 @@ export default {
   vertical-align: top;
 }
 .comment-block {
-  margin-top: 50px;
   color: #9c9c9c;
-  width: 750px;
+  width: 70%;
   padding-bottom: 50px;
   text-align: center;
   background-color: white;
@@ -223,10 +225,12 @@ export default {
 .auto-input:focus {
   border: rgb(0, 127, 255) 0.5px solid;
 }
+
 .comment-content {
   word-wrap: break-word;
   white-space:pre-line;
 }
+
 .timer {
   font-size: .8em;
   float: right;
@@ -250,9 +254,6 @@ export default {
   .portrait {
     height: 30px;
     width: 30px;
-  }
-  .btn-comment {
-    padding: 5px 10px;
   }
   .img {
     height: 25px;
