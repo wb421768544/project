@@ -4,7 +4,7 @@
       <i class="icon-star icon" :class="[{'icon-star-after': getUser.id && (getUser.id in starJSON)}]"></i>
       <span class="num">{{article.star}}</span>
     </div>
-    <div title="查看评论" @click="comment">
+    <div title="查看评论" @click="goToComment">
       <i class="icon-comment icon"></i>
       <span class="num">{{article.comment}}</span>
     </div>
@@ -19,10 +19,12 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { fetchStar } from '@/request';
+
 export default {
   data() {
     return {
-      starJSON: {}
+      starJSON: {},
     };
   },
   props: ['article', 'author', 'stars'],
@@ -31,8 +33,7 @@ export default {
       if(!this.isLogin) {
         return alert('请登录');
       }
-      var url = this.getApi('api?require=updatestar&num=');
-      var num = 0;
+      let num = 0;
       if($('.icon-star').is('.icon-star-after')) {
         $('.icon-star').removeClass('icon-star-after');
         num = -1;
@@ -40,20 +41,19 @@ export default {
         $('.icon-star').addClass('icon-star-after');
         num = 1;
       }
-      url += `${num}&article_id=${this.article.article_id}&name=${this.author.name}`;
-      $.ajax({
-        url,
-        success(json) {
-          if(!json.flag) {
-            alert(json.reason);
-          }
+      const { name } = this.author;
+      const { article_id: articleId } = this.article;
+      this.$emit('updateStar', {
+        num,
+        name,
+        articleId,
+        callback: () => {
+          this.article.star = Number(this.article.star) + num;
         },
-        xhrFields: {withCredentials: true}
       });
-      this.article.star = parseInt(this.article.star) + num;
     },
-    comment() {
-      $('.comment-block')[0].scrollIntoView();
+    goToComment() {
+      this.$emit('goToComment');
     }
   },
   computed: mapGetters(['getUser', 'getApi', 'isLogin']),
@@ -78,44 +78,42 @@ function getFlag(self){
 </script>
 
 <style scoped>
+.side-icon {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  margin: 1em;
+  padding: 1em;
+}
 .icon {
-  width: 1.3em;
-  height: 1.3em;
-  box-sizing: border-box;
+  width: 2em;
+  height: 2em;
   display: inline-block;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: center;
 }
-.side-icon {
-  position: sticky;
-  top: 100px;
-  margin-right: 2em;
-  margin-top: 300px;
-  height: fit-content;
-  font-size: 1.8em;
-  user-select: none;
-}
 .side-icon > div {
-  cursor: pointer;
-  text-align: center;
   position: relative;
-  border-radius: 3em;
+  margin: 1em;
   padding: 0.4em;
-  margin-bottom: 1em;
+  border-radius: 3em;
   background-color: white;
+  cursor: pointer;
 }
 .num {
   position: absolute;
-  display: inline-block;
-  width: 1.5em;
-  background-color: #c6c6c6;
+  width: 1em;
+  height: 1em;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  text-align: center;
+  border-radius: 50%;
   color: white;
-  top: -6px;
-  right: -6px;
-  border-radius: 1em;
-  font-size: 0.5em;
+  background-color: #c6c6c6;
 }
 .icon-star {background-image: url(../assets/star-before.svg);}
 .icon-comment {

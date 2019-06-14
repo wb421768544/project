@@ -6,6 +6,8 @@
         :article="article"
         :stars="article.starJSON"
         :author="authorInfor"
+        @updateStar="handleUpdateStar"
+        @goToComment="handleToComment"
       />
       <article>
         <Header
@@ -30,14 +32,14 @@
         :author="authorInfor"
       />
     </div>
-    <CommentCard :comments="comments" />
+    <CommentCard ref="comment" :comments="comments" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 
-import { fetchArticle } from '@/request';
+import { fetchArticle, fetchStar } from '@/request';
 
 import Header from './header.vue';
 import IconCard from './icon-card.vue';
@@ -79,6 +81,19 @@ export default {
           }
         });
     },
+    handleUpdateStar({ callback, ...params }) {
+      fetchStar(params)
+        .then((res) => {
+          if (!res.flag) {
+            alert(res.reason);
+            return;
+          }
+          callback();
+        });
+    },
+    handleToComment() {
+      this.$refs.comment.$el.scrollIntoView();
+    },
   },
   components: {
     Header,
@@ -98,6 +113,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 .re-editor {
   color: black;
@@ -107,6 +123,7 @@ export default {
   display: flex;
   margin: 90px auto;
   width: 70%;
+  width: fit-content;
 }
 article {
   flex: 1;
@@ -123,7 +140,8 @@ article {
     width: 99%;
   }
   .shift {
-    display: none;
+    display: none!important;
+    border: 1px solid black;
   }
   .article-area {
     width: 99%;
